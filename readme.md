@@ -38,6 +38,3 @@ Ce projet est conçu pour être servi comme un site statique. Le `docker-compose
     ```bash
     docker-compose down
     ```
-
----
-© 2024
