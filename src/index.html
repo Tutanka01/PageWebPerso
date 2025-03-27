@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Utilisation de ton nom dans le titre -->
+    <title>NEXUS v2.1 // Mohamad El Akhal // Interface Racine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lien vers le fichier CSS externe -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Canvas pour l'arrière-plan animé -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Conteneur principal du terminal -->
+    <div id="terminal-container">
+        <!-- Barre de titre stylisée -->
+        <div class="title-bar">NEXUS v2.1 // Mohamad // Accès Racine</div>
+        <!-- Zone d'affichage des sorties -->
+        <div id="terminal-output"></div>
+        <!-- Ligne pour l'entrée utilisateur -->
+        <div id="input-line">
+            <span class="prompt">[vous@nexus ~] #</span>
+            <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus />
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <!-- Liens vers les fichiers JavaScript externes (utilisant type="module") -->
+    <script src="js/canvas.js" type="module"></script>
+    <script src="js/commands.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+
+</body>
+</html>

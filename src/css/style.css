@@ -1,0 +1,287 @@
+/* css/style.css */
+:root {
+    --color-background: #04060c;
+    --color-terminal-bg: rgba(8, 12, 25, 0.85); /* Légèrement plus opaque */
+    --color-border: rgba(0, 200, 230, 0.4);
+    --color-border-glow: rgba(0, 200, 230, 0.15);
+    --color-text: #d0e0ff;
+    --color-prompt: #00eaff; /* Cyan éclatant */
+    --color-command: #f0f8ff; /* Blanc Alice */
+    --color-output: #b0d0ff; /* Bleu plus doux */
+    --color-success: #40ff50; /* Vert plus vif */
+    --color-warning: #ffcd40; /* Un peu plus vif */
+    --color-error: #ff6060;
+    --color-highlight: #f080ff; /* Plus lumineux */
+    --color-category: var(--color-highlight);
+    --color-link: var(--color-prompt);
+    --color-link-hover: var(--color-highlight);
+    --font-terminal: 'Fira Code', monospace;
+    --glow-prompt: 0 0 6px rgba(0, 234, 255, 0.6);
+    --glow-highlight: 0 0 8px rgba(240, 128, 255, 0.7); /* Glow highlight plus prononcé */
+    --glow-success: 0 0 6px rgba(64, 255, 80, 0.6);
+    --scanline-opacity: 0.025; /* Encore plus subtil */
+    --flicker-intensity: 0.004;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-terminal);
+    font-size: 16px; /* Ajustable si besoin */
+}
+
+/* Effets CRT/Holo améliorés */
+body::before { /* Scanlines subtiles */
+    content: ""; position: fixed; inset: 0;
+    background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 3px; /* Lignes plus fines */
+    opacity: var(--scanline-opacity);
+    z-index: 3; pointer-events: none;
+    animation: subtleScan 25s linear infinite;
+}
+@keyframes subtleScan { to { background-position-y: -3px; } }
+
+body::after { /* Flicker très léger */
+     content: ""; position: fixed; inset: 0;
+     background: rgba(255, 255, 255, var(--flicker-intensity));
+     z-index: 4; pointer-events: none;
+     animation: subtleFlicker 0.07s infinite alternate;
+}
+@keyframes subtleFlicker { from { opacity: 0.7; } to { opacity: 1; } }
+
+#background-canvas {
+    position: fixed; inset: 0;
+    z-index: -1; pointer-events: none;
+    opacity: 0.3; /* Légèrement plus visible */
+}
+
+#terminal-container {
+    position: absolute;
+    inset: 3% 3% 3% 3%; /* Marges légèrement réduites */
+    background: radial-gradient(ellipse at center, rgba(10, 15, 30, 0.9) 0%, rgba(8, 12, 25, 0.95) 100%);
+    border: 1px solid var(--color-border);
+    border-radius: 12px; /* Plus arrondi */
+    box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7);
+    backdrop-filter: blur(14px); /* Flou plus prononcé */
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    animation: borderPulse 7s infinite ease-in-out;
+}
+@keyframes borderPulse {
+    0%, 100% { border-color: var(--color-border); box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7); }
+    50% { border-color: rgba(0, 220, 255, 0.6); box-shadow: 0 0 50px rgba(0, 220, 255, 0.3), inset 0 0 25px rgba(8, 12, 25, 0.7); }
+}
+
+.title-bar {
+    height: 28px; /* Légèrement plus haute */
+    background: linear-gradient(rgba(18, 23, 45, 0.9), rgba(12, 18, 35, 0.9));
+    border-bottom: 1px solid var(--color-border);
+    display: flex; align-items: center;
+    padding: 0 18px; font-size: 0.85em;
+    color: var(--color-prompt); text-shadow: var(--glow-prompt);
+    flex-shrink: 0; user-select: none; /* Empêche la sélection */
+}
+.title-bar::before {
+    content: '● ● ●'; margin-right: 12px;
+    color: rgba(0, 234, 255, 0.4); letter-spacing: 5px;
+}
+
+#terminal-output {
+    flex-grow: 1;
+    padding: 15px 30px 20px 30px; /* Plus d'espace */
+    overflow-y: auto;
+    line-height: 1.65; /* Encore plus aéré */
+    word-wrap: break-word;
+    scroll-behavior: smooth;
+}
+#terminal-output::-webkit-scrollbar { width: 8px; }
+#terminal-output::-webkit-scrollbar-track { background: transparent; }
+#terminal-output::-webkit-scrollbar-thumb { background: rgba(0, 234, 255, 0.35); border-radius: 4px; border: 1px solid rgba(0, 234, 255, 0.1); }
+#terminal-output::-webkit-scrollbar-thumb:hover { background: rgba(0, 234, 255, 0.65); }
+
+.terminal-line {
+    display: block; min-height: 1.65em; white-space: pre-wrap;
+    color: var(--color-output); opacity: 0;
+    transform: translateY(3px); /* Animation plus subtile */
+    animation: fadeInLine 0.25s ease-out forwards;
+    margin-bottom: 2px; /* Léger espace entre lignes */
+}
+/* Animation plus douce */
+@keyframes fadeInLine { to { opacity: 1; transform: translateY(0); } }
+
+/* Styles spécifiques */
+.line-input-echo .prompt { color: var(--color-prompt); font-weight: 500; margin-right: 10px; text-shadow: var(--glow-prompt); }
+.line-input-echo .command { color: var(--color-command); }
+.line-system { color: #9ab0e0; font-style: italic; opacity: 0.85; }
+.line-success { color: var(--color-success); text-shadow: var(--glow-success); }
+.line-warning { color: var(--color-warning); }
+.line-error { color: var(--color-error); font-weight: 500; }
+.line-highlight { color: var(--color-highlight); font-weight: 500; text-shadow: var(--glow-highlight); }
+.line-header {
+    color: var(--color-prompt); font-weight: 600;
+    margin: 1.1em 0 0.6em 0; text-transform: uppercase; letter-spacing: 1.5px; /* Plus espacé */
+    display: block; padding-bottom: 0.4em;
+    border-bottom: 1px solid rgba(0, 234, 255, 0.4); /* Ligne plus visible */
+    text-shadow: var(--glow-prompt);
+}
+.ascii-art {
+    color: var(--color-prompt); text-shadow: var(--glow-prompt);
+    white-space: pre; margin: 0.5em 0; font-size: 0.9em; line-height: 1.1;
+    opacity: 0.9;
+}
+.separator {
+    display: block; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+    margin: 1.4em 0; opacity: 0.4; /* Moins visible */
+}
+.loading-indicator { /* Gardé au cas où, mais non utilisé sans RSS */
+    display: inline-block;
+    animation: loadingDots 1.4s infinite steps(4);
+    color: var(--color-warning);
+    font-weight: 600;
+}
+@keyframes loadingDots { 0% { content: '.'; } 25% { content: '..'; } 50% { content: '...'; } 75% { content: '....'; } }
+
+/* Liens */
+a {
+    color: var(--color-link); text-decoration: none;
+    border-bottom: 1px dashed rgba(0, 234, 255, 0.6); /* Pointillés plus visibles */
+    transition: color 0.2s, border-color 0.2s, text-shadow 0.2s;
+}
+a:hover, a:focus {
+    color: var(--color-link-hover);
+    border-bottom: 1px solid var(--color-link-hover);
+    text-shadow: var(--glow-highlight);
+    outline: none;
+}
+
+/* Input */
+#input-line {
+    display: flex; align-items: center;
+    padding: 14px 30px; /* Encore plus d'espace */
+    border-top: 1px solid var(--color-border);
+    background-color: rgba(5, 8, 16, 0.8); /* Plus sombre */
+    flex-shrink: 0;
+}
+.prompt {
+    color: var(--color-prompt); font-weight: 600;
+    margin-right: 12px; text-shadow: var(--glow-prompt); white-space: nowrap;
+    animation: promptPulse 3.5s infinite ease-in-out;
+}
+@keyframes promptPulse { 50% { opacity: 0.75; } }
+
+#terminal-input {
+    flex-grow: 1; background: none; border: none; outline: none;
+    color: var(--color-command); font-family: var(--font-terminal); font-size: inherit;
+    caret-color: var(--color-highlight);
+}
+.cursor {
+    display: inline-block; width: 10px; height: 1.6em; /* Plus épais et haut */
+    background-color: var(--color-highlight); margin-left: 3px; vertical-align: bottom; /* Aligné en bas */
+    animation: blinkCursor 1s infinite steps(1);
+    box-shadow: var(--glow-highlight); opacity: 0; border-radius: 1px; /* Léger arrondi */
+}
+@keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+#terminal-input:focus + .cursor { opacity: 1; }
+
+/* Formatage Compétences */
+.skills-categories-list span { display: inline-block; margin: 0 18px 8px 0; color: var(--color-category); font-weight: 500; cursor: pointer; transition: text-shadow 0.2s; }
+.skills-categories-list span:hover { text-shadow: var(--glow-highlight); }
+.skills-output { padding-left: 0; margin-top: 0.8em; }
+.skill-category { margin-bottom: 1.8em; padding-left: 1.2em; border-left: 3px solid var(--color-highlight); }
+.skill-category h3 { color: var(--color-highlight); font-weight: 600; margin-bottom: 0.7em; display: inline-block; border-bottom: 1px solid rgba(240, 128, 255, 0.4); padding-bottom: 0.2em; margin-left: -1.2em; padding-left: 1.2em; letter-spacing: 0.5px; }
+.skill-list { list-style: none; padding-left: 0.8em; }
+.skill-list li { margin-bottom: 0.6em; position: relative; padding-left: 2em; line-height: 1.55; }
+.skill-list li::before { content: '▹'; position: absolute; left: 0; top: 0.05em; color: var(--color-prompt); opacity: 0.9; font-size: 1.2em; transition: transform 0.2s ease-out; }
+.skill-list li:hover::before { transform: translateX(3px); }
+.skill-list strong { color: var(--color-text); font-weight: 500; background-color: rgba(0, 234, 255, 0.15); padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid rgba(0, 234, 255, 0.25); }
+
+/* --- Styles pour la commande AIDE (Responsive) --- */
+.help-section {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+}
+
+/* Style par défaut (Mobile) : Empilé */
+.help-entry {
+    margin-bottom: 0.8em;
+}
+.help-command {
+    display: block;
+    color: var(--color-prompt);
+    font-weight: 500;
+    margin-bottom: 0.2em;
+}
+.help-description {
+    display: block;
+    padding-left: 1.5em; /* Indentation pour la description */
+    color: var(--color-output);
+    font-size: 0.95em;
+}
+/* Cas spécifique pour les options de compétences sur mobile */
+.help-description .line-system {
+    display: block;
+    margin-top: 0.1em;
+    opacity: 0.8;
+    padding-left: 0; /* Pas de double indentation */
+}
+
+
+/* Style Desktop (via Media Query) : Deux Colonnes */
+@media (min-width: 768px) { /* Ajuste ce breakpoint si nécessaire */
+    .help-entry {
+        display: grid;
+        grid-template-columns: minmax(200px, 250px) 1fr; /* Colonne commande (largeur fixe/max) + Colonne description (reste) */
+        gap: 15px;
+        align-items: baseline;
+        margin-bottom: 0.4em;
+    }
+
+    .help-command {
+        display: inline;
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+
+    .help-description {
+        display: inline;
+        padding-left: 0; /* Annule l'indentation mobile */
+        font-size: 1em;
+    }
+
+     /* Ajustement pour la ligne 'competences' avec options */
+     .help-entry:has(.line-system) {
+        align-items: start;
+     }
+     .help-description .line-system {
+         /* Garde le style mobile (block) pour que ça reste en dessous */
+         padding-left: 0; /* Annule l'indentation héritée si besoin */
+     }
+}
+/* --- Fin des styles pour la commande AIDE --- */
+
+
+/* Responsive Global */
+@media (max-width: 768px) {
+    body { font-size: 14px; }
+    #terminal-container { inset: 1% 1% 1% 1%; border-radius: 8px; }
+    .title-bar { height: 22px; font-size: 0.75em; padding: 0 12px; }
+    .title-bar::before { margin-right: 6px; letter-spacing: 4px; }
+    #terminal-output { padding: 10px 18px 12px 18px; }
+    #input-line { padding: 10px 18px; }
+
+    /* Assure que les styles desktop de l'aide ne s'appliquent pas */
+    /* Normalement géré par mobile-first, mais sécurité supplémentaire */
+    .help-entry { display: block; grid-template-columns: none; gap: 0; align-items: normal; }
+    .help-command { display: block; margin-bottom: 0.2em; white-space: normal; }
+    .help-description { display: block; padding-left: 1.5em; font-size: 0.95em; }
+    .help-description .line-system { padding-left: 0; }
+}
