@@ -1,5 +1,5 @@
 // js/main.js
-import { content, skillCategories, availableThemes, availableSettings } from './commands.js';
+import { content, skillCategories, availableThemes, availableSettings, helpData, projectData } from './commands.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
@@ -16,14 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let isProcessing = false;
     let currentCommand = ''; // Garde la valeur de l'input avant l'historique/tab
 
-    // Liste des commandes de base (sans arguments) et aliases
-    const baseCommands = ['aide', 'profil', 'competences', 'projets', 'cv', 'blog', 'contact', 'theme', 'settings', 'banniere', 'effacer', 'date', 'echo'];
-    const commandAliases = {
-        help: 'aide', about: 'profil', skills: 'competences',
-        projects: 'projets', resume: 'cv', banner: 'banniere', clear: 'effacer'
-    };
-    // Toutes les commandes possibles pour l'autocomplétion
-    const availableCommands = [...new Set([...baseCommands, ...Object.keys(commandAliases)])];
+    // --- Command Definitions & Aliases ---
+    // Utilise helpData pour construire la liste des commandes et alias
+    const baseCommands = Object.keys(helpData.commands).filter(cmd => !helpData.commands[cmd].aliasFor);
+    const commandAliases = Object.entries(helpData.commands)
+                               .filter(([name, data]) => data.aliasFor)
+                               .reduce((acc, [name, data]) => { acc[name] = data.aliasFor; return acc; }, {});
+    const availableCommands = Object.keys(helpData.commands); // Toutes commandes et alias pour l'autocomplétion
 
     // --- Settings & Theme Persistence ---
     const settingsKey = 'mohterm_settings';
@@ -116,48 +115,51 @@ document.addEventListener('DOMContentLoaded', () => {
         output.appendChild(line);
         scrollToBottom();
 
-        // --- Gestion des Clics (remplace onclick) ---
-        // Utilise la délégation d'événements si beaucoup d'éléments cliquables sont ajoutés dynamiquement,
-        // mais pour quelques catégories/settings/themes, c'est acceptable de les attacher directement.
-
-        // Clics sur les catégories de compétences
-        if (!isInputEcho && htmlContent.includes('skills-categories-list')) {
-            line.querySelectorAll('.skills-categories-list span').forEach(span => {
-                span.addEventListener('click', () => handleSpanClick(span, 'competences'));
-            });
-        }
-        // Clics sur les options de settings
-        if (!isInputEcho && htmlContent.includes('settings-list')) {
-            line.querySelectorAll('.settings-list span').forEach(span => {
-                span.addEventListener('click', () => handleSpanClick(span, 'settings'));
-            });
-        }
-        // Clics sur les options de theme
-        if (!isInputEcho && htmlContent.includes('theme-list')) {
-             line.querySelectorAll('.theme-list span').forEach(span => {
-                 span.addEventListener('click', () => handleSpanClick(span, 'theme'));
-             });
-        }
+        // --- Gestion des Clics (Utilise les data-attributes) ---
+        // Attache les écouteurs aux nouveaux éléments cliquables dans la ligne ajoutée
+        line.querySelectorAll('[data-command-prefix]').forEach(span => {
+            span.addEventListener('click', () => handleSpanClick(span));
+        });
     }
 
-    // Fonction générique pour gérer les clics sur les spans
-    function handleSpanClick(spanElement, commandPrefix) {
+    // Fonction générique pour gérer les clics sur les spans avec data-attributes
+    function handleSpanClick(spanElement) {
         if (isProcessing) return;
-        const value = spanElement.textContent.replace('◈ ', '').trim();
-        let cmd = '';
-        if (commandPrefix === 'settings') {
-            // Pour settings, on veut juste afficher l'aide ou un état, pas exécuter directement
-            cmd = `${commandPrefix}`; // Affiche l'aide des settings
-             // Ou si on voulait pré-remplir : cmd = `${commandPrefix} ${value} `; input.focus();
-        } else {
-             cmd = `${commandPrefix} ${value}`;
+        const prefix = spanElement.dataset.commandPrefix;
+        const value = spanElement.dataset.commandValue;
+        let cmd = `${prefix} ${value}`;
+
+        // Cas où l'on exécute directement la commande au clic
+        const executeDirectlyOnClick = [
+            'aide', // Cliquer sur une catégorie d'aide ou une commande essentielle
+            'projets' // Cliquer sur un titre de projet
+        ];
+
+        if (executeDirectlyOnClick.includes(prefix)) {
+             // Si c'est 'aide' et la valeur est une catégorie ou une commande valide
+             if (prefix === 'aide' && (helpData.categories[value] || helpData.commands[value])) {
+                 processCommand(cmd);
+                 input.value = ''; // Vide l'input après exécution
+                 return; // Sortir
+             }
+             // Si c'est 'projets' et la valeur est un ID de projet valide
+             if (prefix === 'projets' && projectData[value]) {
+                 processCommand(cmd);
+                 input.value = ''; // Vide l'input après exécution
+                 return; // Sortir
+             }
         }
 
-        input.value = cmd; // Met la commande dans l'input pour que l'utilisateur puisse la voir/modifier/valider
-        // Optionnellement, on pourrait exécuter directement:
-        // processCommand(cmd);
-        // input.value = ''; // Effacer après exécution directe
-        input.focus(); // Remet le focus sur l'input
+        // Cas spécial pour settings: on veut juste pré-remplir pour ajouter on/off
+        if (prefix === 'settings' && availableSettings.includes(value)) {
+             cmd += ' '; // Ajoute un espace pour que l'utilisateur tape on/off
+        }
+
+        // Pré-remplit l'input pour les autres cas (compétences, theme, settings partiel)
+        input.value = cmd;
+        input.focus();
+        // Déplace le curseur à la fin
+        input.setSelectionRange(input.value.length, input.value.length);
     }
 
 
@@ -180,8 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     element.innerHTML += buffer; // Append buffered tag content
                     buffer = '';
                 }
-                if (!inTag && char !== ' ') { // Only pause for non-space visible characters
+                if (!inTag && char !== ' ' && char !== '\n') { // Only pause for non-space/non-newline visible characters
                     scrollToBottom();
+                    // Adjust speed dynamically? Could be complex. Keep it simple for now.
                     await new Promise(res => setTimeout(res, speed));
                 }
             }
@@ -205,8 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Traitement des Commandes ---
     async function processCommand(command) {
-        if (isProcessing || !command) { // Ne pas traiter les commandes vides
-             if (!isProcessing) { // Si juste vide, reset prompt
+        // Ignore si déjà en traitement ou si la commande est vide/undefined
+        if (isProcessing || !command) {
+             // Si juste vide mais pas en traitement, ajoute une ligne vide pour simuler le prompt
+             if (!isProcessing && command !== undefined) {
                  addOutput(`<span class="prompt">${promptElement.textContent}</span><span class="command"></span>`, true);
              }
              return;
@@ -217,8 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const args = commandTrimmed.split(' ').filter(arg => arg !== ''); // Sépare et retire les espaces vides
         const cmdLower = args[0].toLowerCase();
         const rest = args.slice(1).join(' '); // Le reste des arguments en une chaîne
-        const arg1 = args[1]?.toLowerCase(); // Premier argument (pour theme, settings, competences)
-        const arg2 = args[2]?.toLowerCase(); // Deuxième argument (pour settings on/off)
+        const arg1 = args[1]?.toLowerCase(); // Premier argument
+        const arg2 = args[2]?.toLowerCase(); // Deuxième argument
 
         // Affiche la commande entrée par l'utilisateur (echo)
         addOutput(`<span class="prompt">${promptElement.textContent}</span><span class="command">${commandTrimmed}</span>`, true);
@@ -239,18 +244,37 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // --- Switch principal des commandes ---
             switch (effectiveCmd) {
-                case 'aide': displayContent(content.aide); break;
+                // --- Commande AIDE (Nouvelle Logique) ---
+                case 'aide':
+                    if (!arg1) {
+                        displayContent(content.aide.renderCategories()); // Affiche catégories + essentiels
+                    } else if (helpData.categories[arg1]) {
+                        displayContent(content.aide.renderCategoryHelp(arg1)); // Aide pour une catégorie
+                    } else if (helpData.commands[arg1]) {
+                        // Si l'argument est une commande (ou un alias), affiche l'aide détaillée
+                        displayContent(content.aide.renderCommandHelp(arg1));
+                    } else {
+                        displayContent(content.aide.renderNotFoundError(arg1)); // Terme inconnu
+                    }
+                    break;
+
+                // --- Commande PROJETS (Nouvelle Logique) ---
+                case 'projets':
+                    if (!arg1) {
+                        displayContent(content.projets.renderList()); // Affiche la liste des projets
+                    } else {
+                        displayContent(content.projets.renderDetail(arg1)); // Affiche le détail du projet ou erreur
+                    }
+                    break;
+
+                // --- Autres Commandes ---
                 case 'profil': displayContent(content.profil); break;
                 case 'competences':
                     if (!arg1) { displayContent(content.competences.categories); }
                     else if (arg1 === 'tout' || arg1 === 'all') { displayContent(content.competences.tout); }
                     else if (skillCategories.includes(arg1)) { displayContent(content.competences[arg1]); }
-                    else {
-                        displayError(`Catégorie '${arg1}' inconnue.`);
-                        displayContent(content.competences.categories); // Rappelle les options
-                    }
+                    else { displayError(`Catégorie '${arg1}' inconnue.`); displayContent(content.competences.categories); }
                     break;
-                case 'projets': displayContent(content.projets); break;
                 case 'cv': displayContent(content.cv); break;
                 case 'blog': displayContent(content.blog); break;
                 case 'contact': displayContent(content.contact); break;
@@ -259,17 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'date': addOutput(content.date()); break;
                 case 'echo': addOutput(content.echo(rest)); break;
                 case 'theme':
-                    if (!arg1) { displayContent(content.themeList()); } // Liste les thèmes si pas d'argument
-                    else if (availableThemes.includes(arg1)) {
-                        applyTheme(arg1);
-                        saveTheme();
-                        addOutput(content.theme(arg1, true));
-                    } else {
-                        addOutput(content.theme(arg1, false));
-                    }
+                    if (!arg1) { displayContent(content.themeList()); }
+                    else if (availableThemes.includes(arg1)) { applyTheme(arg1); saveTheme(); addOutput(content.theme(arg1, true)); }
+                    else { addOutput(content.theme(arg1, false)); }
                     break;
                 case 'settings':
-                    if (!arg1) { displayContent(content.settingsList()); } // Liste les settings si pas d'argument
+                    if (!arg1) { displayContent(content.settingsList()); }
                     else if (availableSettings.includes(arg1)) {
                          if (arg2 === 'on' || arg2 === 'off') {
                             const newState = arg2 === 'on';
@@ -358,82 +377,82 @@ document.addEventListener('DOMContentLoaded', () => {
             default:
                  // Si on tape autre chose, on quitte le mode historique visuellement
                  // (mais historyIndex reste prêt pour ArrowUp/Down)
-                 // Note: On ne met pas à jour currentCommand ici pour chaque touche,
-                 // car ArrowUp/Down doit pouvoir restaurer la ligne originale.
-                 // currentCommand est mis à jour juste avant de naviguer dans l'historique.
                  break;
         }
     });
 
     function handleTabCompletion(currentInput) {
         const inputLower = currentInput.toLowerCase();
-        const parts = inputLower.split(' ');
-        const commandPart = parts[0];
-        const argPart = parts.length > 1 ? parts[1] : '';
+        // Trouve la dernière partie après un espace pour la complétion
+        const lastSpaceIndex = inputLower.lastIndexOf(' ');
+        const partToComplete = lastSpaceIndex === -1 ? inputLower : inputLower.substring(lastSpaceIndex + 1);
+        const baseInput = lastSpaceIndex === -1 ? "" : currentInput.substring(0, lastSpaceIndex + 1);
 
-        let possibleMatches = [];
-        let baseCommand = '';
+        const parts = inputLower.split(' ').filter(p => p !== ''); // Sépare et filtre les vides
+        const commandPart = parts[0] || '';
+        const effectiveCmd = commandAliases[commandPart] || commandPart;
+        const argIndex = parts.length - (currentInput.endsWith(' ') ? 0 : 1); // Index de l'argument qu'on essaie de compléter
+
+        let potentialCompletions = [];
 
         // 1. Compléter la commande elle-même
-        if (parts.length === 1) {
-            possibleMatches = availableCommands.filter(cmd => cmd.startsWith(inputLower));
-            baseCommand = '';
+        if (argIndex === 0) {
+            potentialCompletions = availableCommands.filter(cmd => cmd.startsWith(partToComplete));
         }
-        // 2. Compléter les arguments (competences, theme, settings)
-        else if (parts.length === 2) {
-            const effectiveCmd = commandAliases[commandPart] || commandPart;
-            baseCommand = `${commandPart} `; // Garde la commande + espace
-
-            if (effectiveCmd === 'competences') {
-                possibleMatches = [...skillCategories, 'tout'].filter(cat => cat.startsWith(argPart));
+        // 2. Compléter les arguments
+        else if (argIndex === 1) {
+            if (effectiveCmd === 'aide') {
+                potentialCompletions = [...Object.keys(helpData.categories), ...availableCommands].filter(term => term.startsWith(partToComplete));
+            } else if (effectiveCmd === 'competences') {
+                potentialCompletions = [...skillCategories, 'tout'].filter(cat => cat.startsWith(partToComplete));
+            } else if (effectiveCmd === 'projets') {
+                potentialCompletions = Object.keys(projectData).filter(id => id.startsWith(partToComplete));
             } else if (effectiveCmd === 'theme') {
-                possibleMatches = availableThemes.filter(th => th.startsWith(argPart));
+                potentialCompletions = availableThemes.filter(th => th.startsWith(partToComplete));
             } else if (effectiveCmd === 'settings') {
-                possibleMatches = availableSettings.filter(s => s.startsWith(argPart));
+                potentialCompletions = availableSettings.filter(s => s.startsWith(partToComplete));
             }
         }
          // 3. Compléter 'on'/'off' pour settings
-         else if (parts.length === 3 && (commandAliases[commandPart] || commandPart) === 'settings') {
+         else if (argIndex === 2 && effectiveCmd === 'settings') {
              const settingArg = parts[1];
-             const onOffArg = parts[2];
-              baseCommand = `${commandPart} ${settingArg} `; // Garde commande + setting + espace
-              if (availableSettings.includes(settingArg)) {
-                  possibleMatches = ['on', 'off'].filter(state => state.startsWith(onOffArg));
-              }
+             if (availableSettings.includes(settingArg)) {
+                 potentialCompletions = ['on', 'off'].filter(state => state.startsWith(partToComplete));
+             }
          }
 
-
-        if (possibleMatches.length === 1) {
-            // Complète si une seule correspondance
-            input.value = baseCommand + possibleMatches[0];
+        // --- Logique d'application de la complétion ---
+        if (potentialCompletions.length === 1) {
+            // Complète si une seule correspondance, ajoute un espace si c'est une commande complète
+            const suffix = (argIndex === 0 && !currentInput.includes(' ')) ? ' ' : ''; // Ajoute espace après commande complétée
+            input.value = baseInput + potentialCompletions[0] + suffix;
             currentCommand = input.value; // Update state used by arrows
-        } else if (possibleMatches.length > 1) {
+        } else if (potentialCompletions.length > 1) {
             // Trouve le plus long préfixe commun
-            let prefix = possibleMatches[0];
-            for (let i = 1; i < possibleMatches.length; i++) {
-                while (possibleMatches[i].slice(0, prefix.length) !== prefix && prefix.length > 0) {
+            let prefix = potentialCompletions[0];
+            for (let i = 1; i < potentialCompletions.length; i++) {
+                while (!potentialCompletions[i].startsWith(prefix) && prefix.length > 0) {
                     prefix = prefix.slice(0, -1);
                 }
             }
 
-            const currentArgPart = parts.length > 1 ? parts[parts.length - 1] : commandPart;
-
-            if (prefix.length > currentArgPart.length) {
+            if (prefix.length > partToComplete.length) {
                 // Si le préfixe commun est plus long que ce qui est tapé, complète jusqu'au préfixe
-                input.value = baseCommand + prefix;
+                input.value = baseInput + prefix;
                 currentCommand = input.value; // Update state
             } else {
                 // Sinon (ou si préfixe = input), liste les options
                 addOutput(`<span class="prompt">${promptElement.textContent}</span><span class="command">${currentInput}</span>`, true);
-                addOutput(`<span class="line-system">${possibleMatches.join('   ')}</span>`);
+                addOutput(`<span class="line-system">${potentialCompletions.join('   ')}</span>`);
             }
         }
     }
 
 
-    // Focus sur l'input si on clique dans le terminal (mais pas sur un lien)
+    // Focus sur l'input si on clique dans le terminal (mais pas sur un lien ou span cliquable)
     terminalContainer.addEventListener('click', (e) => {
-        if (e.target.tagName !== 'A' && e.target.tagName !== 'SPAN' && !isProcessing) { // Evite de voler le focus aux spans cliquables
+        // Vérifie si la cible ou un de ses parents proches est un lien ou un span avec data-attribute
+        if (!e.target.closest('a, [data-command-prefix]') && !isProcessing) {
              input.focus();
         }
     });
@@ -444,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputLine.style.visibility = 'hidden'; // Cache la ligne d'input
 
         const bootLines = [
-             { text: "Activation Interface MohTerm v1.0...", speed: 25, class: 'line-system' },
+             { text: "Activation Interface MohTerm v1.1...", speed: 25, class: 'line-system' },
              { text: "Analyse Noyau d'Expertise : Mohamad El Akhal...", speed: 30, class: 'line-system' },
              { text: "Chargement Modules CyberSec.............[<span class='line-success'>OK</span>]", speed: 15, class: 'line-system' },
              { text: "Initialisation Protocoles DevOps.........[<span class='line-success'>OK</span>]", speed: 15, class: 'line-system' },
