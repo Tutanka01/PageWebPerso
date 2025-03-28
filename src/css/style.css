@@ -1,28 +1,131 @@
 /* css/style.css */
+
+/* --- Thème Default (Cyan/Blue) --- */
 :root {
     --color-background: #04060c;
-    --color-terminal-bg: rgba(8, 12, 25, 0.85); /* Légèrement plus opaque */
-    --color-border: rgba(0, 200, 230, 0.4);
-    --color-border-glow: rgba(0, 200, 230, 0.15);
+    --color-terminal-bg: rgba(8, 12, 25, 0.88); /* Légèrement plus opaque */
+    --color-border: rgba(0, 200, 230, 0.5);
+    --color-border-glow: rgba(0, 200, 230, 0.2);
     --color-text: #d0e0ff;
     --color-prompt: #00eaff; /* Cyan éclatant */
     --color-command: #f0f8ff; /* Blanc Alice */
-    --color-output: #b0d0ff; /* Bleu plus doux */
-    --color-success: #40ff50; /* Vert plus vif */
-    --color-warning: #ffcd40; /* Un peu plus vif */
-    --color-error: #ff6060;
-    --color-highlight: #f080ff; /* Plus lumineux */
+    --color-output: #b8d4ff; /* Bleu plus doux */
+    --color-success: #40ff50; /* Vert vif */
+    --color-warning: #ffcd40; /* Orange/Jaune vif */
+    --color-error: #ff6060; /* Rouge doux */
+    --color-highlight: #f080ff; /* Magenta/Rose vif */
     --color-category: var(--color-highlight);
     --color-link: var(--color-prompt);
     --color-link-hover: var(--color-highlight);
+    --color-scrollbar-thumb: rgba(0, 234, 255, 0.45);
+    --color-scrollbar-thumb-hover: rgba(0, 234, 255, 0.75);
+    --color-titlebar-bg-start: rgba(18, 23, 45, 0.9);
+    --color-titlebar-bg-end: rgba(12, 18, 35, 0.9);
+    --color-titlebar-text: var(--color-prompt);
+    --color-input-line-bg: rgba(5, 8, 16, 0.85);
+    --color-input-caret: var(--color-highlight);
+    --color-cursor-bg: var(--color-highlight);
+    --color-skill-tag-bg: rgba(0, 234, 255, 0.15);
+    --color-skill-tag-border: rgba(0, 234, 255, 0.3);
+    --color-header-border: rgba(0, 234, 255, 0.4);
+    --color-separator: var(--color-border);
+    --color-dots: rgba(0, 234, 255, 0.4);
+    --color-skill-bullet: var(--color-prompt);
+    --color-skill-border-left: var(--color-highlight);
+
     --font-terminal: 'Fira Code', monospace;
-    --glow-prompt: 0 0 6px rgba(0, 234, 255, 0.6);
-    --glow-highlight: 0 0 8px rgba(240, 128, 255, 0.7); /* Glow highlight plus prononcé */
-    --glow-success: 0 0 6px rgba(64, 255, 80, 0.6);
-    --scanline-opacity: 0.025; /* Encore plus subtil */
-    --flicker-intensity: 0.004;
+    --glow-prompt: 0 0 7px rgba(0, 234, 255, 0.7);
+    --glow-highlight: 0 0 9px rgba(240, 128, 255, 0.8);
+    --glow-success: 0 0 7px rgba(64, 255, 80, 0.7);
+    --glow-error: 0 0 7px rgba(255, 96, 96, 0.6);
+    --glow-cursor: var(--glow-highlight);
+
+    --scanline-opacity: 0.03; /* Très subtil */
+    --flicker-intensity: 0.005;
 }
 
+/* --- Thème Matrix --- */
+body.theme-matrix {
+    --color-background: #000500;
+    --color-terminal-bg: rgba(0, 18, 0, 0.88);
+    --color-border: rgba(0, 255, 70, 0.5);
+    --color-border-glow: rgba(0, 255, 70, 0.2);
+    --color-text: #00ff41;
+    --color-prompt: #30ff70;
+    --color-command: #e0ffe0;
+    --color-output: #20ff60;
+    --color-success: #80ff80;
+    --color-warning: #f0ff40;
+    --color-error: #ff8080;
+    --color-highlight: #a0ffa0;
+    --color-category: var(--color-highlight);
+    --color-link: var(--color-prompt);
+    --color-link-hover: #ffffff;
+    --color-scrollbar-thumb: rgba(0, 255, 70, 0.45);
+    --color-scrollbar-thumb-hover: rgba(0, 255, 70, 0.75);
+    --color-titlebar-bg-start: rgba(0, 20, 0, 0.9);
+    --color-titlebar-bg-end: rgba(0, 10, 0, 0.9);
+    --color-titlebar-text: var(--color-prompt);
+    --color-input-line-bg: rgba(0, 10, 0, 0.85);
+    --color-input-caret: var(--color-highlight);
+    --color-cursor-bg: var(--color-highlight);
+    --color-skill-tag-bg: rgba(0, 255, 70, 0.15);
+    --color-skill-tag-border: rgba(0, 255, 70, 0.3);
+    --color-header-border: rgba(0, 255, 70, 0.4);
+    --color-separator: var(--color-border);
+    --color-dots: rgba(0, 255, 70, 0.4);
+    --color-skill-bullet: var(--color-prompt);
+    --color-skill-border-left: var(--color-highlight);
+
+    --glow-prompt: 0 0 7px rgba(48, 255, 112, 0.7);
+    --glow-highlight: 0 0 9px rgba(160, 255, 160, 0.8);
+    --glow-success: 0 0 7px rgba(128, 255, 128, 0.7);
+    --glow-error: 0 0 7px rgba(255, 128, 128, 0.6);
+    --glow-cursor: var(--glow-highlight);
+}
+
+/* --- Thème Amber --- */
+body.theme-amber {
+    --color-background: #1a1000;
+    --color-terminal-bg: rgba(30, 18, 5, 0.88);
+    --color-border: rgba(255, 170, 0, 0.5);
+    --color-border-glow: rgba(255, 170, 0, 0.2);
+    --color-text: #ffcc80; /* Amber/Orange pâle */
+    --color-prompt: #ffa726; /* Amber vif */
+    --color-command: #fff3e0; /* Blanc cassé */
+    --color-output: #ffb74d; /* Amber doux */
+    --color-success: #a5d6a7; /* Vert pâle */
+    --color-warning: #ffee58; /* Jaune vif */
+    --color-error: #ef9a9a; /* Rouge pâle */
+    --color-highlight: #ffecb3; /* Jaune très pâle */
+    --color-category: var(--color-highlight);
+    --color-link: var(--color-prompt);
+    --color-link-hover: #ffffff;
+    --color-scrollbar-thumb: rgba(255, 170, 0, 0.45);
+    --color-scrollbar-thumb-hover: rgba(255, 170, 0, 0.75);
+    --color-titlebar-bg-start: rgba(40, 25, 10, 0.9);
+    --color-titlebar-bg-end: rgba(25, 15, 5, 0.9);
+    --color-titlebar-text: var(--color-prompt);
+    --color-input-line-bg: rgba(18, 10, 2, 0.85);
+    --color-input-caret: var(--color-highlight);
+    --color-cursor-bg: var(--color-highlight);
+    --color-skill-tag-bg: rgba(255, 170, 0, 0.15);
+    --color-skill-tag-border: rgba(255, 170, 0, 0.3);
+    --color-header-border: rgba(255, 170, 0, 0.4);
+    --color-separator: var(--color-border);
+    --color-dots: rgba(255, 170, 0, 0.4);
+    --color-skill-bullet: var(--color-prompt);
+    --color-skill-border-left: var(--color-highlight);
+
+    --glow-prompt: 0 0 7px rgba(255, 167, 38, 0.7);
+    --glow-highlight: 0 0 9px rgba(255, 236, 179, 0.8);
+    --glow-success: 0 0 7px rgba(165, 214, 167, 0.7);
+    --glow-error: 0 0 7px rgba(239, 154, 154, 0.6);
+    --glow-cursor: var(--glow-highlight);
+}
+
+
+/* --- Styles Globaux --- */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -35,125 +138,143 @@ html, body {
     background-color: var(--color-background);
     color: var(--color-text);
     font-family: var(--font-terminal);
-    font-size: 16px; /* Ajustable si besoin */
+    font-size: 16px; /* Base size */
+    transition: background-color 0.3s ease, color 0.3s ease; /* For theme switching */
 }
 
-/* Effets CRT/Holo améliorés */
-body::before { /* Scanlines subtiles */
+/* --- Effets CRT/Holo Optionnels --- */
+body::before { /* Scanlines */
     content: ""; position: fixed; inset: 0;
-    background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.25) 50%);
-    background-size: 100% 3px; /* Lignes plus fines */
+    background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.3) 50%);
+    background-size: 100% 3px;
     opacity: var(--scanline-opacity);
     z-index: 3; pointer-events: none;
     animation: subtleScan 25s linear infinite;
+    will-change: background-position; /* Perf hint */
 }
+body.no-scanlines::before { display: none; } /* Class pour désactiver */
 @keyframes subtleScan { to { background-position-y: -3px; } }
 
-body::after { /* Flicker très léger */
+body::after { /* Flicker */
      content: ""; position: fixed; inset: 0;
      background: rgba(255, 255, 255, var(--flicker-intensity));
      z-index: 4; pointer-events: none;
      animation: subtleFlicker 0.07s infinite alternate;
+     will-change: opacity; /* Perf hint */
 }
+body.no-flicker::after { display: none; } /* Class pour désactiver */
 @keyframes subtleFlicker { from { opacity: 0.7; } to { opacity: 1; } }
 
+/* Canvas Background */
 #background-canvas {
     position: fixed; inset: 0;
     z-index: -1; pointer-events: none;
-    opacity: 0.3; /* Légèrement plus visible */
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
 }
+body.no-canvas #background-canvas { opacity: 0; } /* Class pour désactiver */
 
+
+/* --- Conteneur Terminal --- */
 #terminal-container {
     position: absolute;
-    inset: 3% 3% 3% 3%; /* Marges légèrement réduites */
-    background: radial-gradient(ellipse at center, rgba(10, 15, 30, 0.9) 0%, rgba(8, 12, 25, 0.95) 100%);
+    inset: 3%; /* Marges */
+    background: radial-gradient(ellipse at center, rgba(10, 15, 30, 0.92) 0%, var(--color-terminal-bg) 100%);
     border: 1px solid var(--color-border);
-    border-radius: 12px; /* Plus arrondi */
+    border-radius: 12px;
     box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7);
-    backdrop-filter: blur(14px); /* Flou plus prononcé */
+    backdrop-filter: blur(12px); /* Peut être gourmand, ajustable */
     display: flex; flex-direction: column;
     overflow: hidden;
-    animation: borderPulse 7s infinite ease-in-out;
+    animation: borderPulse 7s infinite ease-in-out alternate;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* For theme switching */
 }
 @keyframes borderPulse {
-    0%, 100% { border-color: var(--color-border); box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7); }
-    50% { border-color: rgba(0, 220, 255, 0.6); box-shadow: 0 0 50px rgba(0, 220, 255, 0.3), inset 0 0 25px rgba(8, 12, 25, 0.7); }
+    from { border-color: var(--color-border); box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7); }
+    to { border-color: color-mix(in srgb, var(--color-border) 80%, white); box-shadow: 0 0 50px color-mix(in srgb, var(--color-border-glow) 60%, white), inset 0 0 25px rgba(8, 12, 25, 0.7); }
 }
 
+/* --- Barre de Titre --- */
 .title-bar {
-    height: 28px; /* Légèrement plus haute */
-    background: linear-gradient(rgba(18, 23, 45, 0.9), rgba(12, 18, 35, 0.9));
+    height: 28px;
+    background: linear-gradient(var(--color-titlebar-bg-start), var(--color-titlebar-bg-end));
     border-bottom: 1px solid var(--color-border);
     display: flex; align-items: center;
     padding: 0 18px; font-size: 0.85em;
-    color: var(--color-prompt); text-shadow: var(--glow-prompt);
-    flex-shrink: 0; user-select: none; /* Empêche la sélection */
+    color: var(--color-titlebar-text); text-shadow: var(--glow-prompt);
+    flex-shrink: 0; user-select: none;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
 }
 .title-bar::before {
     content: '● ● ●'; margin-right: 12px;
-    color: rgba(0, 234, 255, 0.4); letter-spacing: 5px;
+    color: var(--color-dots); letter-spacing: 5px;
+    transition: color 0.3s ease;
 }
 
+/* --- Zone d'Output --- */
 #terminal-output {
     flex-grow: 1;
-    padding: 15px 30px 20px 30px; /* Plus d'espace */
+    padding: 15px 30px 20px 30px;
     overflow-y: auto;
-    line-height: 1.65; /* Encore plus aéré */
+    line-height: 1.7; /* Augmenté pour l'aération */
     word-wrap: break-word;
     scroll-behavior: smooth;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--color-scrollbar-thumb) transparent; /* Firefox */
 }
+/* Scrollbar Webkit */
 #terminal-output::-webkit-scrollbar { width: 8px; }
 #terminal-output::-webkit-scrollbar-track { background: transparent; }
-#terminal-output::-webkit-scrollbar-thumb { background: rgba(0, 234, 255, 0.35); border-radius: 4px; border: 1px solid rgba(0, 234, 255, 0.1); }
-#terminal-output::-webkit-scrollbar-thumb:hover { background: rgba(0, 234, 255, 0.65); }
+#terminal-output::-webkit-scrollbar-thumb { background-color: var(--color-scrollbar-thumb); border-radius: 4px; border: 1px solid rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease; }
+#terminal-output::-webkit-scrollbar-thumb:hover { background-color: var(--color-scrollbar-thumb-hover); }
 
 .terminal-line {
-    display: block; min-height: 1.65em; white-space: pre-wrap;
+    display: block; min-height: 1.7em; white-space: pre-wrap;
     color: var(--color-output); opacity: 0;
-    transform: translateY(3px); /* Animation plus subtile */
+    transform: translateY(3px);
     animation: fadeInLine 0.25s ease-out forwards;
-    margin-bottom: 2px; /* Léger espace entre lignes */
+    margin-bottom: 3px; /* Léger espace entre lignes */
+    transition: color 0.3s ease;
 }
-/* Animation plus douce */
 @keyframes fadeInLine { to { opacity: 1; transform: translateY(0); } }
 
-/* Styles spécifiques */
-.line-input-echo .prompt { color: var(--color-prompt); font-weight: 500; margin-right: 10px; text-shadow: var(--glow-prompt); }
-.line-input-echo .command { color: var(--color-command); }
-.line-system { color: #9ab0e0; font-style: italic; opacity: 0.85; }
-.line-success { color: var(--color-success); text-shadow: var(--glow-success); }
-.line-warning { color: var(--color-warning); }
-.line-error { color: var(--color-error); font-weight: 500; }
-.line-highlight { color: var(--color-highlight); font-weight: 500; text-shadow: var(--glow-highlight); }
+/* --- Styles Spécifiques des Lignes --- */
+.line-input-echo { animation: none !important; opacity: 1 !important; transform: none !important; } /* Pas d'anim pour l'écho */
+.line-input-echo .prompt { color: var(--color-prompt); font-weight: 500; margin-right: 10px; text-shadow: var(--glow-prompt); transition: color 0.3s ease, text-shadow 0.3s ease; }
+.line-input-echo .command { color: var(--color-command); transition: color 0.3s ease; }
+.line-system { color: color-mix(in srgb, var(--color-text) 75%, var(--color-background)); font-style: italic; opacity: 0.9; transition: color 0.3s ease; }
+.line-success { color: var(--color-success); text-shadow: var(--glow-success); transition: color 0.3s ease, text-shadow 0.3s ease; }
+.line-warning { color: var(--color-warning); transition: color 0.3s ease; }
+.line-error { color: var(--color-error); font-weight: 500; text-shadow: var(--glow-error); transition: color 0.3s ease, text-shadow 0.3s ease; }
+.line-highlight { color: var(--color-highlight); font-weight: 500; text-shadow: var(--glow-highlight); transition: color 0.3s ease, text-shadow 0.3s ease; }
+
 .line-header {
     color: var(--color-prompt); font-weight: 600;
-    margin: 1.1em 0 0.6em 0; text-transform: uppercase; letter-spacing: 1.5px; /* Plus espacé */
+    margin: 1.2em 0 0.7em 0; text-transform: uppercase; letter-spacing: 1.5px;
     display: block; padding-bottom: 0.4em;
-    border-bottom: 1px solid rgba(0, 234, 255, 0.4); /* Ligne plus visible */
+    border-bottom: 1px solid var(--color-header-border);
     text-shadow: var(--glow-prompt);
+    transition: color 0.3s ease, border-color 0.3s ease, text-shadow 0.3s ease;
 }
+
 .ascii-art {
     color: var(--color-prompt); text-shadow: var(--glow-prompt);
     white-space: pre; margin: 0.5em 0; font-size: 0.9em; line-height: 1.1;
     opacity: 0.9;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
+
 .separator {
     display: block; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
-    margin: 1.4em 0; opacity: 0.4; /* Moins visible */
+    background: linear-gradient(90deg, transparent, var(--color-separator), transparent);
+    margin: 1.5em 0; opacity: 0.5;
+    transition: background 0.3s ease;
 }
-.loading-indicator { /* Gardé au cas où, mais non utilisé sans RSS */
-    display: inline-block;
-    animation: loadingDots 1.4s infinite steps(4);
-    color: var(--color-warning);
-    font-weight: 600;
-}
-@keyframes loadingDots { 0% { content: '.'; } 25% { content: '..'; } 50% { content: '...'; } 75% { content: '....'; } }
 
 /* Liens */
 a {
     color: var(--color-link); text-decoration: none;
-    border-bottom: 1px dashed rgba(0, 234, 255, 0.6); /* Pointillés plus visibles */
+    border-bottom: 1px dashed color-mix(in srgb, var(--color-link) 70%, transparent);
     transition: color 0.2s, border-color 0.2s, text-shadow 0.2s;
 }
 a:hover, a:focus {
@@ -163,125 +284,137 @@ a:hover, a:focus {
     outline: none;
 }
 
-/* Input */
+/* --- Ligne d'Input --- */
 #input-line {
     display: flex; align-items: center;
-    padding: 14px 30px; /* Encore plus d'espace */
+    padding: 14px 30px;
     border-top: 1px solid var(--color-border);
-    background-color: rgba(5, 8, 16, 0.8); /* Plus sombre */
+    background-color: var(--color-input-line-bg);
     flex-shrink: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 .prompt {
     color: var(--color-prompt); font-weight: 600;
     margin-right: 12px; text-shadow: var(--glow-prompt); white-space: nowrap;
     animation: promptPulse 3.5s infinite ease-in-out;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 @keyframes promptPulse { 50% { opacity: 0.75; } }
 
 #terminal-input {
     flex-grow: 1; background: none; border: none; outline: none;
     color: var(--color-command); font-family: var(--font-terminal); font-size: inherit;
-    caret-color: var(--color-highlight);
+    caret-color: var(--color-input-caret); /* Couleur du curseur texte natif */
+    transition: color 0.3s ease, caret-color 0.3s ease;
 }
-.cursor {
-    display: inline-block; width: 10px; height: 1.6em; /* Plus épais et haut */
-    background-color: var(--color-highlight); margin-left: 3px; vertical-align: bottom; /* Aligné en bas */
+.cursor { /* Curseur bloc simulé */
+    display: inline-block; width: 10px; height: 1.7em; /* Ajusté à line-height */
+    background-color: var(--color-cursor-bg); margin-left: 3px; vertical-align: bottom;
     animation: blinkCursor 1s infinite steps(1);
-    box-shadow: var(--glow-highlight); opacity: 0; border-radius: 1px; /* Léger arrondi */
+    box-shadow: var(--glow-cursor); opacity: 0; border-radius: 1px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-#terminal-input:focus + .cursor { opacity: 1; }
+#terminal-input:focus + .cursor { opacity: 1; } /* Afficher si l'input a le focus */
+#terminal-input:disabled + .cursor { opacity: 0; } /* Cacher si l'input est désactivé */
 
-/* Formatage Compétences */
-.skills-categories-list span { display: inline-block; margin: 0 18px 8px 0; color: var(--color-category); font-weight: 500; cursor: pointer; transition: text-shadow 0.2s; }
-.skills-categories-list span:hover { text-shadow: var(--glow-highlight); }
-.skills-output { padding-left: 0; margin-top: 0.8em; }
-.skill-category { margin-bottom: 1.8em; padding-left: 1.2em; border-left: 3px solid var(--color-highlight); }
-.skill-category h3 { color: var(--color-highlight); font-weight: 600; margin-bottom: 0.7em; display: inline-block; border-bottom: 1px solid rgba(240, 128, 255, 0.4); padding-bottom: 0.2em; margin-left: -1.2em; padding-left: 1.2em; letter-spacing: 0.5px; }
-.skill-list { list-style: none; padding-left: 0.8em; }
-.skill-list li { margin-bottom: 0.6em; position: relative; padding-left: 2em; line-height: 1.55; }
-.skill-list li::before { content: '▹'; position: absolute; left: 0; top: 0.05em; color: var(--color-prompt); opacity: 0.9; font-size: 1.2em; transition: transform 0.2s ease-out; }
-.skill-list li:hover::before { transform: translateX(3px); }
-.skill-list strong { color: var(--color-text); font-weight: 500; background-color: rgba(0, 234, 255, 0.15); padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid rgba(0, 234, 255, 0.25); }
+/* --- Formatage Compétences & Projets --- */
+.skills-categories-list span, .settings-list span, .theme-list span {
+    display: inline-block; margin: 0 18px 8px 0;
+    color: var(--color-category); font-weight: 500;
+    cursor: pointer;
+    transition: text-shadow 0.2s, color 0.3s ease;
+}
+.skills-categories-list span:hover, .settings-list span:hover, .theme-list span:hover {
+    text-shadow: var(--glow-highlight);
+}
+
+.skills-output, .projects-output { padding-left: 0; margin-top: 0.8em; }
+
+.skill-category, .project-entry {
+    margin-bottom: 1.8em; padding-left: 1.2em;
+    border-left: 3px solid var(--color-skill-border-left);
+    transition: border-color 0.3s ease;
+}
+.skill-category h3, .project-entry h3 {
+    color: var(--color-highlight); font-weight: 600; margin-bottom: 0.7em;
+    display: inline-block; border-bottom: 1px solid color-mix(in srgb, var(--color-highlight) 50%, transparent); padding-bottom: 0.2em;
+    margin-left: -1.2em; padding-left: 1.2em; letter-spacing: 0.5px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+.skill-list, .project-details { list-style: none; padding-left: 0.8em; }
+.skill-list li, .project-details li { margin-bottom: 0.6em; position: relative; padding-left: 2em; line-height: 1.6; }
+
+/* Bullet point stylisé */
+.skill-list li::before, .project-details li::before {
+    content: '▹'; position: absolute; left: 0; top: 0.05em;
+    color: var(--color-skill-bullet); opacity: 0.9; font-size: 1.2em;
+    transition: transform 0.2s ease-out, color 0.3s ease;
+}
+.skill-list li:hover::before, .project-details li:hover::before {
+    transform: translateX(4px);
+}
+
+/* Style pour les mots-clés (strong) */
+.skill-list strong, .project-details strong {
+    color: var(--color-text); font-weight: 500;
+    background-color: var(--color-skill-tag-bg); padding: 0.15em 0.4em;
+    border-radius: 4px; border: 1px solid var(--color-skill-tag-border);
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
 
 /* --- Styles pour la commande AIDE (Responsive) --- */
-.help-section {
-    margin-top: 0.5em;
-    margin-bottom: 1em;
-}
+.help-section { margin-top: 0.5em; margin-bottom: 1em; }
 
-/* Style par défaut (Mobile) : Empilé */
-.help-entry {
-    margin-bottom: 0.8em;
-}
-.help-command {
-    display: block;
-    color: var(--color-prompt);
-    font-weight: 500;
-    margin-bottom: 0.2em;
-}
-.help-description {
-    display: block;
-    padding-left: 1.5em; /* Indentation pour la description */
-    color: var(--color-output);
-    font-size: 0.95em;
-}
-/* Cas spécifique pour les options de compétences sur mobile */
-.help-description .line-system {
-    display: block;
-    margin-top: 0.1em;
-    opacity: 0.8;
-    padding-left: 0; /* Pas de double indentation */
-}
+/* Mobile : Empilé */
+.help-entry { margin-bottom: 0.8em; }
+.help-command { display: block; color: var(--color-prompt); font-weight: 500; margin-bottom: 0.2em; transition: color 0.3s ease; }
+.help-description { display: block; padding-left: 1.5em; color: var(--color-output); font-size: 0.95em; transition: color 0.3s ease; }
+.help-description .line-system { display: block; margin-top: 0.1em; opacity: 0.8; padding-left: 0; }
 
-
-/* Style Desktop (via Media Query) : Deux Colonnes */
-@media (min-width: 768px) { /* Ajuste ce breakpoint si nécessaire */
+/* Desktop : Deux Colonnes */
+@media (min-width: 768px) {
     .help-entry {
         display: grid;
-        grid-template-columns: minmax(200px, 250px) 1fr; /* Colonne commande (largeur fixe/max) + Colonne description (reste) */
-        gap: 15px;
-        align-items: baseline;
-        margin-bottom: 0.4em;
+        grid-template-columns: minmax(200px, 280px) 1fr; /* Colonne commande + Colonne description */
+        gap: 15px; align-items: baseline; margin-bottom: 0.5em;
     }
-
-    .help-command {
-        display: inline;
-        margin-bottom: 0;
-        white-space: nowrap;
-    }
-
-    .help-description {
-        display: inline;
-        padding-left: 0; /* Annule l'indentation mobile */
-        font-size: 1em;
-    }
-
-     /* Ajustement pour la ligne 'competences' avec options */
-     .help-entry:has(.line-system) {
-        align-items: start;
-     }
-     .help-description .line-system {
-         /* Garde le style mobile (block) pour que ça reste en dessous */
-         padding-left: 0; /* Annule l'indentation héritée si besoin */
-     }
+    .help-command { display: inline; margin-bottom: 0; white-space: nowrap; }
+    .help-description { display: inline; padding-left: 0; font-size: 1em; }
+    .help-entry:has(.line-system) { align-items: start; } /* Alignement haut pour commandes multi-lignes */
+    .help-description .line-system { padding-left: 0; }
 }
-/* --- Fin des styles pour la commande AIDE --- */
 
-
-/* Responsive Global */
+/* --- Responsive Global --- */
 @media (max-width: 768px) {
-    body { font-size: 14px; }
-    #terminal-container { inset: 1% 1% 1% 1%; border-radius: 8px; }
-    .title-bar { height: 22px; font-size: 0.75em; padding: 0 12px; }
+    body { font-size: 14px; } /* Taille police plus petite sur mobile */
+    #terminal-container { inset: 1%; border-radius: 8px; }
+    .title-bar { height: 24px; font-size: 0.78em; padding: 0 12px; }
     .title-bar::before { margin-right: 6px; letter-spacing: 4px; }
-    #terminal-output { padding: 10px 18px 12px 18px; }
+    #terminal-output { padding: 10px 18px 12px 18px; line-height: 1.65; }
     #input-line { padding: 10px 18px; }
+    .cursor { height: 1.65em; }
 
     /* Assure que les styles desktop de l'aide ne s'appliquent pas */
-    /* Normalement géré par mobile-first, mais sécurité supplémentaire */
     .help-entry { display: block; grid-template-columns: none; gap: 0; align-items: normal; }
     .help-command { display: block; margin-bottom: 0.2em; white-space: normal; }
     .help-description { display: block; padding-left: 1.5em; font-size: 0.95em; }
     .help-description .line-system { padding-left: 0; }
+
+    .skills-categories-list span, .settings-list span, .theme-list span { margin-right: 12px; }
+}
+
+/* --- Styles spécifiques pour les projets --- */
+.project-entry { /* Réutilise certains styles de skill-category */
+    border-left-color: var(--color-prompt); /* Couleur différente pour distinguer */
+    transition: border-color 0.3s ease;
+}
+.project-entry h3 { /* Réutilise certains styles de skill-category h3 */
+    color: var(--color-prompt); /* Couleur différente */
+    border-bottom-color: color-mix(in srgb, var(--color-prompt) 50%, transparent);
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+.project-details li::before {
+    color: var(--color-prompt); /* Couleur différente */
+    transition: color 0.3s ease;
 }

@@ -1,7 +1,7 @@
 services:
   web:
-    image: php:apache
+    image: httpd:alpine
     volumes:
-      - ./src:/var/www/html
+      - ./src:/usr/local/apache2/htdocs
     ports:
       - "8080:80"
