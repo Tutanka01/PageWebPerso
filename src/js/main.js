@@ -182,9 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     element.innerHTML += buffer; // Append buffered tag content
                     buffer = '';
                 }
-                if (!inTag && char !== ' ' && char !== '\n') { // Only pause for non-space/non-newline visible characters
+                // Pause seulement pour les caractères visibles non-espace et non-retour chariot
+                if (!inTag && char !== ' ' && char !== '\n') {
                     scrollToBottom();
-                    // Adjust speed dynamically? Could be complex. Keep it simple for now.
                     await new Promise(res => setTimeout(res, speed));
                 }
             }
@@ -238,8 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Résout les alias
         const effectiveCmd = commandAliases[cmdLower] || cmdLower;
 
-        // Simulation d'un léger temps de traitement
-        await new Promise(resolve => setTimeout(resolve, 80 + Math.random() * 120));
+        // Pas de délai simulé pour htop pour le rendre plus réactif
+        if (effectiveCmd !== 'htop') {
+            await new Promise(resolve => setTimeout(resolve, 80 + Math.random() * 120));
+        } else {
+             await new Promise(resolve => setTimeout(resolve, 10)); // Juste un tick pour le rendu
+        }
+
 
         try {
             // --- Switch principal des commandes ---
@@ -306,6 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         addOutput(content.settings(arg1, arg2, false)); // Erreur si setting inconnu
                     }
                     break;
+
+                // --- Nouvelle Commande HTOP ---
+                case 'htop':
+                    // Appelle la fonction qui génère le contenu HTML à chaque fois
+                    // Note: content.htop est une référence à la fonction generateHtopContent
+                    displayContent(content.htop());
+                    break;
+
                 case '': break; // Ne rien faire si commande vide (déjà géré au début)
                 default: addOutput(content.inconnu(commandTrimmed)); break; // Commande inconnue
             }
@@ -386,22 +399,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // Trouve la dernière partie après un espace pour la complétion
         const lastSpaceIndex = inputLower.lastIndexOf(' ');
         const partToComplete = lastSpaceIndex === -1 ? inputLower : inputLower.substring(lastSpaceIndex + 1);
+        // Ce qui précède la partie à compléter (incluant l'espace si présent)
         const baseInput = lastSpaceIndex === -1 ? "" : currentInput.substring(0, lastSpaceIndex + 1);
 
         const parts = inputLower.split(' ').filter(p => p !== ''); // Sépare et filtre les vides
         const commandPart = parts[0] || '';
         const effectiveCmd = commandAliases[commandPart] || commandPart;
-        const argIndex = parts.length - (currentInput.endsWith(' ') ? 0 : 1); // Index de l'argument qu'on essaie de compléter
+        // Index de l'argument qu'on essaie de compléter (0 si c'est la commande, 1 si 1er arg, etc.)
+        // Si l'input se termine par un espace, on complète l'argument suivant (index = parts.length)
+        // Sinon, on complète l'argument en cours (index = parts.length - 1)
+        const argIndex = currentInput.endsWith(' ') ? parts.length : parts.length - 1;
 
         let potentialCompletions = [];
 
-        // 1. Compléter la commande elle-même
+        // 1. Compléter la commande elle-même (argIndex est 0)
         if (argIndex === 0) {
             potentialCompletions = availableCommands.filter(cmd => cmd.startsWith(partToComplete));
         }
-        // 2. Compléter les arguments
+        // 2. Compléter les arguments (argIndex est 1 ou plus)
         else if (argIndex === 1) {
             if (effectiveCmd === 'aide') {
+                // Complète avec les catégories ou les noms de commandes
                 potentialCompletions = [...Object.keys(helpData.categories), ...availableCommands].filter(term => term.startsWith(partToComplete));
             } else if (effectiveCmd === 'competences') {
                 potentialCompletions = [...skillCategories, 'tout'].filter(cat => cat.startsWith(partToComplete));
@@ -412,29 +430,39 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (effectiveCmd === 'settings') {
                 potentialCompletions = availableSettings.filter(s => s.startsWith(partToComplete));
             }
+            // echo n'a pas de complétion spécifique pour son argument
         }
-         // 3. Compléter 'on'/'off' pour settings
+         // 3. Compléter 'on'/'off' pour settings (argIndex est 2)
          else if (argIndex === 2 && effectiveCmd === 'settings') {
-             const settingArg = parts[1];
+             const settingArg = parts[1]; // L'argument précédent (le nom du setting)
              if (availableSettings.includes(settingArg)) {
                  potentialCompletions = ['on', 'off'].filter(state => state.startsWith(partToComplete));
              }
          }
+         // Pas d'autre niveau de complétion pour le moment
 
         // --- Logique d'application de la complétion ---
         if (potentialCompletions.length === 1) {
-            // Complète si une seule correspondance, ajoute un espace si c'est une commande complète
-            const suffix = (argIndex === 0 && !currentInput.includes(' ')) ? ' ' : ''; // Ajoute espace après commande complétée
+            // Complète si une seule correspondance
+            // Ajoute un espace seulement si on complète une commande (argIndex 0) ou un argument qui attend autre chose après (ex: settings name)
+            const suffix = (argIndex === 0 || (argIndex === 1 && effectiveCmd === 'settings')) ? ' ' : '';
             input.value = baseInput + potentialCompletions[0] + suffix;
             currentCommand = input.value; // Update state used by arrows
         } else if (potentialCompletions.length > 1) {
             // Trouve le plus long préfixe commun
             let prefix = potentialCompletions[0];
             for (let i = 1; i < potentialCompletions.length; i++) {
-                while (!potentialCompletions[i].startsWith(prefix) && prefix.length > 0) {
-                    prefix = prefix.slice(0, -1);
+                // S'assure que potentialCompletions[i] est défini et est une chaîne
+                if (typeof potentialCompletions[i] === 'string') {
+                    while (!potentialCompletions[i].startsWith(prefix) && prefix.length > 0) {
+                        prefix = prefix.slice(0, -1);
+                    }
+                } else {
+                    // Gérer le cas où un élément n'est pas une chaîne (peu probable ici, mais sécurité)
+                    console.warn("Unexpected non-string element in potentialCompletions:", potentialCompletions[i]);
                 }
             }
+
 
             if (prefix.length > partToComplete.length) {
                 // Si le préfixe commun est plus long que ce qui est tapé, complète jusqu'au préfixe

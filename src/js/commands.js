@@ -68,7 +68,7 @@ const helpData = {
         'info': "Commandes d'Information",
         'perso': "Personnalisation de l'Interface",
         'util': "Utilitaires du Terminal",
-        // 'nav': "Navigation (si système de fichiers ajouté)"
+        'sys': "Surveillance Système (Simulée)", // Nouvelle catégorie
     },
     commands: {
         'aide': { category: 'util', description: "Affiche l'aide. Usage : `aide` (catégories), `aide [catégorie]`, `aide [commande]`." },
@@ -91,10 +91,144 @@ const helpData = {
         'clear': { category: 'util', aliasFor: 'effacer' },
         'date': { category: 'util', description: "Affiche la date et l'heure système actuelles." },
         'echo': { category: 'util', description: "Répète le texte fourni en argument. Usage : `echo [votre texte]`." },
+        // Nouvelle commande HTOP
+        'htop': { category: 'sys', description: "Affiche un aperçu simulé de l'utilisation des ressources système (CPU, RAM, processus)." },
+        'sysmon': { category: 'sys', aliasFor: 'htop' },
     }
 };
 
-// --- Contenu Principal (Utilise les structures ci-dessus) ---
+// --- Fonctions Utilitaires pour HTOP ---
+const formatBytes = (bytes, decimals = 1) => {
+    if (bytes === 0) return '0B';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'K', 'M', 'G', 'T', 'P'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    // Utilise toLocaleString pour potentiellement ajouter des séparateurs de milliers si nécessaire
+    // mais parseFloat est plus simple ici pour juste le formatage numérique.
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
+}
+
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const getRandomFloat = (min, max, decimals = 1) => {
+    const str = (Math.random() * (max - min) + min).toFixed(decimals);
+    return parseFloat(str);
+}
+
+// --- Générateurs de contenu pour HTOP ---
+const generateHtopContent = () => {
+    const numCpus = 12;
+    const totalRamGB = 128;
+    const totalSwapGB = 64; // Swap généreux aussi
+    const ramUsagePercent = getRandomFloat(55, 85); // > 50% comme demandé
+    const swapUsagePercent = getRandomFloat(5, 25); // Swap utilisé mais pas trop
+
+    // CPU Bars
+    let cpuBarsHtml = '';
+    for (let i = 1; i <= numCpus; i++) {
+        const usage = getRandomFloat(5, 95); // Fluctuation large
+        let barColorVar = '--color-htop-cpu-low';
+        if (usage > 75) barColorVar = '--color-htop-cpu-high';
+        else if (usage > 40) barColorVar = '--color-htop-cpu-medium';
+
+        cpuBarsHtml += `
+<span class="htop-cpu-core"> <span class="htop-label">${i}</span><span class="htop-bar"><span class="htop-bar-inner" style="width: ${usage.toFixed(1)}%; background-color: var(${barColorVar});"></span></span><span class="htop-percentage">${usage.toFixed(1)}%</span></span>`;
+    }
+
+    // Memory / Swap Meters
+    const usedRamBytes = (totalRamGB * 1024 * 1024 * 1024) * (ramUsagePercent / 100);
+    const totalRamBytes = totalRamGB * 1024 * 1024 * 1024;
+    const usedSwapBytes = (totalSwapGB * 1024 * 1024 * 1024) * (swapUsagePercent / 100);
+    const totalSwapBytes = totalSwapGB * 1024 * 1024 * 1024;
+
+    const memMeterHtml = `
+<span class="htop-meter"> <span class="htop-label">Mem</span><span class="htop-bar"><span class="htop-bar-inner" style="width: ${ramUsagePercent.toFixed(1)}%; background-color: var(--color-htop-mem);"></span></span><span class="htop-text">${formatBytes(usedRamBytes)}/${formatBytes(totalRamBytes)}</span></span>`;
+    const swapMeterHtml = `
+<span class="htop-meter"> <span class="htop-label">Swp</span><span class="htop-bar"><span class="htop-bar-inner" style="width: ${swapUsagePercent.toFixed(1)}%; background-color: var(--color-htop-swap);"></span></span><span class="htop-text">${formatBytes(usedSwapBytes)}/${formatBytes(totalSwapBytes)}</span></span>`;
+
+    // Summary
+    const tasks = getRandomInt(250, 600);
+    const running = getRandomInt(1, 5);
+    const loadAvg1 = getRandomFloat(0.5, 4.0, 2);
+    const loadAvg5 = getRandomFloat(0.4, loadAvg1 * 0.9, 2);
+    const loadAvg15 = getRandomFloat(0.3, loadAvg5 * 0.8, 2);
+    const uptimeDays = getRandomInt(1, 45);
+    const uptimeHours = getRandomInt(0, 23);
+    const uptimeMins = getRandomInt(0, 59);
+    const uptimeSecs = getRandomInt(0, 59);
+
+    const summaryHtml = `
+<div class="htop-summary"> Tasks: <span class="value">${tasks}</span>, <span class="value">${running}</span> running | Load average: <span class="value">${loadAvg1.toFixed(2)}</span> <span class="value">${loadAvg5.toFixed(2)}</span> <span class="value">${loadAvg15.toFixed(2)}</span> | Uptime: <span class="value">${uptimeDays} days, ${String(uptimeHours).padStart(2,'0')}:${String(uptimeMins).padStart(2,'0')}:${String(uptimeSecs).padStart(2,'0')}</span></div>`;
+
+    // Process List
+    let processListHtml = `
+<div class="htop-process-header"> <span class="htop-pid">PID</span><span class="htop-user">USER</span><span class="htop-pri">PRI</span><span class="htop-ni">NI</span><span class="htop-virt">VIRT</span><span class="htop-res">RES</span><span class="htop-shr">SHR</span><span class="htop-s">S</span><span class="htop-cpu">%CPU</span><span class="htop-mem">%MEM</span><span class="htop-time">TIME+</span><span class="htop-command">Command</span></div>`;
+
+    const users = ['root', 'moh', 'www-data', 'postgres', 'docker', 'systemd+'];
+    const commands = [
+        '/usr/lib/systemd/systemd --switched-root --system --deserialize 31',
+        '[kthreadd]',
+        '[rcu_gp]', '[rcu_par_gp]', '[slub_flushwq]',
+        '[kdevtmpfs]', '[netns]', '[khungtaskd]', '[oom_reaper]', '[writeback]', '[kcompactd0]',
+        '[ksmd]', '[khugepaged]', '[kintegrityd]', '[kblockd]', '[blkcg_punt_bio]', '[edac-poller]',
+        '[devfreq_wq]', '/usr/sbin/irqbalance --foreground', '[kworker/u32:1-events_unbound]',
+        '/usr/lib/systemd/systemd-journald', '/usr/lib/systemd/systemd-udevd',
+        '/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only',
+        '/usr/lib/systemd/systemd-logind', '/usr/bin/containerd',
+        '/usr/sbin/sshd -D', '/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock',
+        'nginx: master process /usr/sbin/nginx -g daemon off;', 'nginx: worker process',
+        'python3 /opt/app/main.py --config /etc/app.conf',
+        'node /srv/api/server.js',
+        'postgres: 16/main: checkpointer', 'postgres: 16/main: background writer', 'postgres: 16/main: walwriter',
+        '/bin/bash', 'htop',
+        '[kworker/0:1H-kblockd]', '[kworker/1:0-events]', '[kworker/5:2-events_power_efficient]'
+    ];
+    const statuses = ['R', 'S', 'S', 'S', 'S', 'S', 'D', 'Z', 'T']; // R=Running, S=Sleeping, D=Disk Sleep, Z=Zombie, T=Stopped
+
+    let pidCounter = getRandomInt(1, 1500);
+    for (let i = 0; i < 20; i++) { // Show ~20 processes
+        pidCounter += getRandomInt(1, 10);
+        const user = users[getRandomInt(0, users.length - 1)];
+        const pri = getRandomInt(15, 25);
+        const ni = pri === 20 ? 0 : getRandomInt(-10, 10);
+        const virtBytes = getRandomInt(50, 4000) * 1024 * 1024; // 50M - 4G
+        const virt = formatBytes(virtBytes);
+        const resRatio = getRandomFloat(0.1, 0.8);
+        const resBytes = virtBytes * resRatio;
+        const res = formatBytes(resBytes);
+        const shrRatio = getRandomFloat(0.05, resRatio * 0.5);
+        const shrBytes = virtBytes * shrRatio;
+        const shr = formatBytes(shrBytes);
+        const status = statuses[getRandomInt(0, statuses.length - 1)];
+        const cpu = status === 'R' ? getRandomFloat(1.0, 25.0) : getRandomFloat(0.0, 0.5); // Higher CPU if Running
+        const mem = (resBytes / totalRamBytes) * 100;
+        const timeM = getRandomInt(0, 150);
+        const timeS = getRandomFloat(0, 59.99, 2);
+        const timeStr = `${timeM}:${String(timeS.toFixed(2)).padStart(5, '0')}`;
+        const command = commands[getRandomInt(0, commands.length - 1)];
+        const isHighlighted = Math.random() < 0.15; // Highlight ~15% of processes
+
+        processListHtml += `
+<div class="htop-process${isHighlighted ? ' htop-process-highlight' : ''}"> <span class="htop-pid">${pidCounter}</span><span class="htop-user">${user}</span><span class="htop-pri">${pri}</span><span class="htop-ni">${ni}</span><span class="htop-virt">${virt}</span><span class="htop-res">${res}</span><span class="htop-shr">${shr}</span><span class="htop-s">${status}</span><span class="htop-cpu">${cpu.toFixed(1)}</span><span class="htop-mem">${mem.toFixed(1)}</span><span class="htop-time">${timeStr}</span><span class="htop-command">${command}</span></div>`;
+    }
+
+    // Assemble final HTML
+    return `
+<div class="htop-container">
+  <div class="htop-cpus">${cpuBarsHtml}</div>
+  <div class="htop-meters">${memMeterHtml}${swapMeterHtml}</div>
+  ${summaryHtml}
+  ${processListHtml}
+</div>`;
+};
+
+
+// --- Contenu Principal ---
 const content = {
     banniere: `
 <pre class="ascii-art" style="color: var(--color-prompt);">
@@ -128,7 +262,7 @@ const content = {
 </div>
 <span class="line-output">Commandes essentielles :</span>
 <div class="help-section">
-  ${['aide', 'profil', 'competences', 'projets', 'cv', 'contact', 'effacer']
+  ${['aide', 'profil', 'competences', 'projets', 'cv', 'contact', 'htop', 'effacer'] // Ajout de htop aux essentiels
     .map(cmdName => content.aide.renderCommandHelp(cmdName, true)) // true pour format court
     .join('')}
 </div>
@@ -345,6 +479,9 @@ const content = {
   ${availableSettings.map(s => `<span data-command-prefix="settings" data-command-value="${s}">◈ ${s}</span>`).join('')}
 </div>
 `,
+
+    // --- HTOP ---
+    htop: generateHtopContent, // La fonction est appelée à chaque fois pour générer le contenu
 
     // --- Utilitaires ---
     inconnu: (cmd) => `<span class="line-error">Accès refusé : Commande '<span class="line-highlight">${cmd}</span>' inconnue.</span>\n<span class="line-output">Consulter '<span class="line-highlight">aide</span>'.</span>`,

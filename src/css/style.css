@@ -1,8 +1,8 @@
 /* css/style.css */
 
 /* --- Thèmes (Default, Matrix, Amber) --- */
-/* ... (Les définitions de thèmes restent identiques) ... */
 :root { /* Default Theme */
+    /* ... (Variables existantes) ... */
     --color-background: #04060c;
     --color-terminal-bg: rgba(8, 12, 25, 0.88);
     --color-border: rgba(0, 200, 230, 0.5);
@@ -11,10 +11,10 @@
     --color-prompt: #00eaff;
     --color-command: #f0f8ff;
     --color-output: #b8d4ff;
-    --color-success: #40ff50;
-    --color-warning: #ffcd40;
-    --color-error: #ff6060;
-    --color-highlight: #f080ff;
+    --color-success: #40ff50; /* Vert pour CPU bas/moyen, RAM OK */
+    --color-warning: #ffcd40; /* Jaune/Orange pour CPU moyen/haut, Swap */
+    --color-error: #ff6060;   /* Rouge pour CPU très haut */
+    --color-highlight: #f080ff; /* Magenta/Rose pour RAM */
     --color-category: var(--color-highlight);
     --color-link: var(--color-prompt);
     --color-link-hover: var(--color-highlight);
@@ -33,8 +33,17 @@
     --color-dots: rgba(0, 234, 255, 0.4);
     --color-skill-bullet: var(--color-prompt);
     --color-skill-border-left: var(--color-highlight);
-    --color-project-id: var(--color-warning); /* Couleur pour l'ID projet */
+    --color-project-id: var(--color-warning);
     --color-help-category-title: var(--color-highlight);
+    /* HTOP Specific Colors */
+    --color-htop-cpu-low: var(--color-success);
+    --color-htop-cpu-medium: var(--color-warning);
+    --color-htop-cpu-high: var(--color-error);
+    --color-htop-mem: var(--color-highlight);
+    --color-htop-swap: var(--color-warning);
+    --color-htop-header: var(--color-prompt);
+    --color-htop-process-highlight-bg: rgba(240, 128, 255, 0.15); /* Highlight process background */
+    --color-htop-bar-bg: rgba(255, 255, 255, 0.08); /* Background of bars */
 
     --font-terminal: 'Fira Code', monospace;
     --glow-prompt: 0 0 7px rgba(0, 234, 255, 0.7);
@@ -47,91 +56,36 @@
     --flicker-intensity: 0.005;
 }
 body.theme-matrix { /* Matrix Theme */
-    --color-background: #000500;
-    --color-terminal-bg: rgba(0, 18, 0, 0.88);
-    --color-border: rgba(0, 255, 70, 0.5);
-    --color-border-glow: rgba(0, 255, 70, 0.2);
-    --color-text: #00ff41;
-    --color-prompt: #30ff70;
-    --color-command: #e0ffe0;
-    --color-output: #20ff60;
-    --color-success: #80ff80;
-    --color-warning: #f0ff40;
-    --color-error: #ff8080;
-    --color-highlight: #a0ffa0;
-    --color-category: var(--color-highlight);
-    --color-link: var(--color-prompt);
-    --color-link-hover: #ffffff;
-    --color-scrollbar-thumb: rgba(0, 255, 70, 0.45);
-    --color-scrollbar-thumb-hover: rgba(0, 255, 70, 0.75);
-    --color-titlebar-bg-start: rgba(0, 20, 0, 0.9);
-    --color-titlebar-bg-end: rgba(0, 10, 0, 0.9);
-    --color-titlebar-text: var(--color-prompt);
-    --color-input-line-bg: rgba(0, 10, 0, 0.85);
-    --color-input-caret: var(--color-highlight);
-    --color-cursor-bg: var(--color-highlight);
-    --color-skill-tag-bg: rgba(0, 255, 70, 0.15);
-    --color-skill-tag-border: rgba(0, 255, 70, 0.3);
-    --color-header-border: rgba(0, 255, 70, 0.4);
-    --color-separator: var(--color-border);
-    --color-dots: rgba(0, 255, 70, 0.4);
-    --color-skill-bullet: var(--color-prompt);
-    --color-skill-border-left: var(--color-highlight);
-    --color-project-id: var(--color-warning);
-    --color-help-category-title: var(--color-highlight);
-
-    --glow-prompt: 0 0 7px rgba(48, 255, 112, 0.7);
-    --glow-highlight: 0 0 9px rgba(160, 255, 160, 0.8);
-    --glow-success: 0 0 7px rgba(128, 255, 128, 0.7);
-    --glow-error: 0 0 7px rgba(255, 128, 128, 0.6);
-    --glow-cursor: var(--glow-highlight);
+    /* ... (Variables existantes) ... */
+    --color-htop-cpu-low: #30ff70;
+    --color-htop-cpu-medium: #f0ff40;
+    --color-htop-cpu-high: #ff8080;
+    --color-htop-mem: #a0ffa0;
+    --color-htop-swap: #f0ff40;
+    --color-htop-header: #30ff70;
+    --color-htop-process-highlight-bg: rgba(160, 255, 160, 0.15);
+    --color-htop-bar-bg: rgba(0, 255, 70, 0.1);
 }
 body.theme-amber { /* Amber Theme */
-    --color-background: #1a1000;
-    --color-terminal-bg: rgba(30, 18, 5, 0.88);
-    --color-border: rgba(255, 170, 0, 0.5);
-    --color-border-glow: rgba(255, 170, 0, 0.2);
-    --color-text: #ffcc80;
-    --color-prompt: #ffa726;
-    --color-command: #fff3e0;
-    --color-output: #ffb74d;
-    --color-success: #a5d6a7;
-    --color-warning: #ffee58;
-    --color-error: #ef9a9a;
-    --color-highlight: #ffecb3;
-    --color-category: var(--color-highlight);
-    --color-link: var(--color-prompt);
-    --color-link-hover: #ffffff;
-    --color-scrollbar-thumb: rgba(255, 170, 0, 0.45);
-    --color-scrollbar-thumb-hover: rgba(255, 170, 0, 0.75);
-    --color-titlebar-bg-start: rgba(40, 25, 10, 0.9);
-    --color-titlebar-bg-end: rgba(25, 15, 5, 0.9);
-    --color-titlebar-text: var(--color-prompt);
-    --color-input-line-bg: rgba(18, 10, 2, 0.85);
-    --color-input-caret: var(--color-highlight);
-    --color-cursor-bg: var(--color-highlight);
-    --color-skill-tag-bg: rgba(255, 170, 0, 0.15);
-    --color-skill-tag-border: rgba(255, 170, 0, 0.3);
-    --color-header-border: rgba(255, 170, 0, 0.4);
-    --color-separator: var(--color-border);
-    --color-dots: rgba(255, 170, 0, 0.4);
-    --color-skill-bullet: var(--color-prompt);
-    --color-skill-border-left: var(--color-highlight);
-    --color-project-id: var(--color-warning);
-    --color-help-category-title: var(--color-highlight);
-
-    --glow-prompt: 0 0 7px rgba(255, 167, 38, 0.7);
-    --glow-highlight: 0 0 9px rgba(255, 236, 179, 0.8);
-    --glow-success: 0 0 7px rgba(165, 214, 167, 0.7);
-    --glow-error: 0 0 7px rgba(239, 154, 154, 0.6);
-    --glow-cursor: var(--glow-highlight);
+    /* ... (Variables existantes) ... */
+    --color-htop-cpu-low: #a5d6a7; /* Vert pâle */
+    --color-htop-cpu-medium: #ffee58; /* Jaune vif */
+    --color-htop-cpu-high: #ef9a9a; /* Rouge pâle */
+    --color-htop-mem: #ffecb3; /* Jaune très pâle */
+    --color-htop-swap: #ffee58;
+    --color-htop-header: #ffa726; /* Amber vif */
+    --color-htop-process-highlight-bg: rgba(255, 236, 179, 0.15);
+    --color-htop-bar-bg: rgba(255, 170, 0, 0.1);
 }
 
+
 /* --- Styles Globaux --- */
+/* ... (Identique) ... */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background-color: var(--color-background); color: var(--color-text); font-family: var(--font-terminal); font-size: 16px; transition: background-color 0.3s ease, color 0.3s ease; }
 
 /* --- Effets CRT/Holo Optionnels --- */
+/* ... (Identique) ... */
 body::before { content: ""; position: fixed; inset: 0; background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.3) 50%); background-size: 100% 3px; opacity: var(--scanline-opacity); z-index: 3; pointer-events: none; animation: subtleScan 25s linear infinite; will-change: background-position; }
 body.no-scanlines::before { display: none; }
 @keyframes subtleScan { to { background-position-y: -3px; } }
@@ -142,14 +96,17 @@ body.no-flicker::after { display: none; }
 body.no-canvas #background-canvas { opacity: 0; }
 
 /* --- Conteneur Terminal --- */
+/* ... (Identique) ... */
 #terminal-container { position: absolute; inset: 3%; background: radial-gradient(ellipse at center, rgba(10, 15, 30, 0.92) 0%, var(--color-terminal-bg) 100%); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7); backdrop-filter: blur(12px); display: flex; flex-direction: column; overflow: hidden; animation: borderPulse 7s infinite ease-in-out alternate; transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
 @keyframes borderPulse { from { border-color: var(--color-border); box-shadow: 0 0 40px var(--color-border-glow), inset 0 0 25px rgba(8, 12, 25, 0.7); } to { border-color: color-mix(in srgb, var(--color-border) 80%, white); box-shadow: 0 0 50px color-mix(in srgb, var(--color-border-glow) 60%, white), inset 0 0 25px rgba(8, 12, 25, 0.7); } }
 
 /* --- Barre de Titre --- */
+/* ... (Identique) ... */
 .title-bar { height: 28px; background: linear-gradient(var(--color-titlebar-bg-start), var(--color-titlebar-bg-end)); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; padding: 0 18px; font-size: 0.85em; color: var(--color-titlebar-text); text-shadow: var(--glow-prompt); flex-shrink: 0; user-select: none; transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, text-shadow 0.3s ease; }
 .title-bar::before { content: '● ● ●'; margin-right: 12px; color: var(--color-dots); letter-spacing: 5px; transition: color 0.3s ease; }
 
 /* --- Zone d'Output --- */
+/* ... (Identique) ... */
 #terminal-output { flex-grow: 1; padding: 15px 30px 20px 30px; overflow-y: auto; line-height: 1.7; word-wrap: break-word; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--color-scrollbar-thumb) transparent; }
 #terminal-output::-webkit-scrollbar { width: 8px; }
 #terminal-output::-webkit-scrollbar-track { background: transparent; }
@@ -160,6 +117,7 @@ body.no-canvas #background-canvas { opacity: 0; }
 @keyframes fadeInLine { to { opacity: 1; transform: translateY(0); } }
 
 /* --- Styles Spécifiques des Lignes --- */
+/* ... (Identique) ... */
 .line-input-echo { animation: none !important; opacity: 1 !important; transform: none !important; }
 .line-input-echo .prompt { color: var(--color-prompt); font-weight: 500; margin-right: 10px; text-shadow: var(--glow-prompt); transition: color 0.3s ease, text-shadow 0.3s ease; }
 .line-input-echo .command { color: var(--color-command); transition: color 0.3s ease; }
@@ -173,10 +131,12 @@ body.no-canvas #background-canvas { opacity: 0; }
 .separator { display: block; height: 1px; background: linear-gradient(90deg, transparent, var(--color-separator), transparent); margin: 1.5em 0; opacity: 0.5; transition: background 0.3s ease; }
 
 /* Liens */
+/* ... (Identique) ... */
 a { color: var(--color-link); text-decoration: none; border-bottom: 1px dashed color-mix(in srgb, var(--color-link) 70%, transparent); transition: color 0.2s, border-color 0.2s, text-shadow 0.2s; }
 a:hover, a:focus { color: var(--color-link-hover); border-bottom: 1px solid var(--color-link-hover); text-shadow: var(--glow-highlight); outline: none; }
 
 /* --- Ligne d'Input --- */
+/* ... (Identique) ... */
 #input-line { display: flex; align-items: center; padding: 14px 30px; border-top: 1px solid var(--color-border); background-color: var(--color-input-line-bg); flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
 .prompt { color: var(--color-prompt); font-weight: 600; margin-right: 12px; text-shadow: var(--glow-prompt); white-space: nowrap; animation: promptPulse 3.5s infinite ease-in-out; transition: color 0.3s ease, text-shadow 0.3s ease; }
 @keyframes promptPulse { 50% { opacity: 0.75; } }
@@ -187,33 +147,18 @@ a:hover, a:focus { color: var(--color-link-hover); border-bottom: 1px solid var(
 #terminal-input:disabled + .cursor { opacity: 0; }
 
 /* --- Éléments Cliquables Génériques --- */
-.clickable-list span {
-    display: inline-block; margin: 0 18px 8px 0;
-    color: var(--color-category); font-weight: 500;
-    cursor: pointer;
-    transition: text-shadow 0.2s, color 0.3s ease;
-}
-.clickable-list span:hover {
-    text-shadow: var(--glow-highlight);
-}
-/* Application aux listes spécifiques */
-.skills-categories-list, .settings-list, .theme-list, .project-list, .help-categories-list {
-    composes: clickable-list; /* Non-standard, mais illustre l'idée. En pratique, on répète les styles ou on utilise une classe commune. */
-    /* Styles spécifiques si besoin */
-}
-/* Répétition pour compatibilité */
-.skills-categories-list span, .settings-list span, .theme-list span, .project-list span, .help-categories-list span {
-    display: inline-block; margin: 0 18px 8px 0;
-    color: var(--color-category); font-weight: 500;
-    cursor: pointer;
-    transition: text-shadow 0.2s, color 0.3s ease;
-}
-.skills-categories-list span:hover, .settings-list span:hover, .theme-list span:hover, .project-list span:hover, .help-categories-list span:hover {
-    text-shadow: var(--glow-highlight);
-}
+/* ... (Identique) ... */
+.clickable-list span { display: inline-block; margin: 0 18px 8px 0; color: var(--color-category); font-weight: 500; cursor: pointer; transition: text-shadow 0.2s, color 0.3s ease; }
+.clickable-list span:hover { text-shadow: var(--glow-highlight); }
+.skills-categories-list span, .settings-list span, .theme-list span, .project-list span, .help-categories-list span, .help-command .line-prompt { display: inline-block; margin: 0 18px 8px 0; color: var(--color-category); font-weight: 500; cursor: pointer; transition: text-shadow 0.2s, color 0.3s ease; }
+.skills-categories-list span:hover, .settings-list span:hover, .theme-list span:hover, .project-list span:hover, .help-categories-list span:hover, .help-command .line-prompt:hover { text-shadow: var(--glow-highlight); }
+/* Ajustement pour les commandes cliquables dans l'aide */
+.help-command .line-prompt { margin: 0; display: inline; /* Reste inline */}
+.help-command .line-prompt:not(:last-child)::after { content: ' / '; color: var(--color-output); cursor: default; }
 
 
 /* --- Formatage Compétences (Détail) --- */
+/* ... (Identique) ... */
 .skills-output { padding-left: 0; margin-top: 0.8em; }
 .skill-category { margin-bottom: 1.8em; padding-left: 1.2em; border-left: 3px solid var(--color-skill-border-left); transition: border-color 0.3s ease; }
 .skill-category h3 { color: var(--color-highlight); font-weight: 600; margin-bottom: 0.7em; display: inline-block; border-bottom: 1px solid color-mix(in srgb, var(--color-highlight) 50%, transparent); padding-bottom: 0.2em; margin-left: -1.2em; padding-left: 1.2em; letter-spacing: 0.5px; transition: color 0.3s ease, border-color 0.3s ease; }
@@ -224,84 +169,170 @@ a:hover, a:focus { color: var(--color-link-hover); border-bottom: 1px solid var(
 .skill-list strong { color: var(--color-text); font-weight: 500; background-color: var(--color-skill-tag-bg); padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid var(--color-skill-tag-border); transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; }
 
 /* --- Styles pour la commande PROJETS --- */
-/* Liste des projets */
+/* ... (Identique) ... */
 .project-list { margin-top: 0.8em; }
-.project-list-item {
-    display: block; /* Chaque projet sur sa ligne */
-    margin-bottom: 0.5em;
-}
-.project-list-item .project-id {
-    color: var(--color-project-id); /* Couleur distincte pour l'ID */
-    font-weight: 600;
-    margin-right: 10px;
-    display: inline-block;
-    min-width: 100px; /* Alignement */
-    transition: color 0.3s ease;
-}
-.project-list-item .project-title {
-    color: var(--color-output);
-    cursor: pointer;
-    border-bottom: 1px dashed transparent; /* Préparation pour hover */
-    transition: color 0.2s, border-color 0.2s;
-}
-.project-list-item .project-title:hover {
-    color: var(--color-link-hover);
-    border-bottom-color: var(--color-link-hover);
-}
-
-/* Détail d'un projet */
+.project-list-item { display: block; margin-bottom: 0.5em; }
+.project-list-item .project-id { color: var(--color-project-id); font-weight: 600; margin-right: 10px; display: inline-block; min-width: 100px; transition: color 0.3s ease; }
+.project-list-item .project-title { color: var(--color-output); cursor: pointer; border-bottom: 1px dashed transparent; transition: color 0.2s, border-color 0.2s; }
+.project-list-item .project-title:hover { color: var(--color-link-hover); border-bottom-color: var(--color-link-hover); }
 .project-detail-output { margin-top: 0.8em; }
-.project-entry { margin-bottom: 1.8em; padding-left: 1.2em; border-left: 3px solid var(--color-prompt); /* Couleur différente des skills */ transition: border-color 0.3s ease; }
+.project-entry { margin-bottom: 1.8em; padding-left: 1.2em; border-left: 3px solid var(--color-prompt); transition: border-color 0.3s ease; }
 .project-entry h3 { color: var(--color-prompt); font-weight: 600; margin-bottom: 0.7em; display: inline-block; border-bottom: 1px solid color-mix(in srgb, var(--color-prompt) 50%, transparent); padding-bottom: 0.2em; margin-left: -1.2em; padding-left: 1.2em; letter-spacing: 0.5px; transition: color 0.3s ease, border-color 0.3s ease; }
 .project-details { list-style: none; padding-left: 0.8em; }
 .project-details li { margin-bottom: 0.6em; position: relative; padding-left: 2em; line-height: 1.6; }
 .project-details li::before { content: '◈'; position: absolute; left: 0; top: 0.05em; color: var(--color-prompt); opacity: 0.9; font-size: 1.2em; transition: transform 0.2s ease-out, color 0.3s ease; }
 .project-details li:hover::before { transform: translateX(4px); }
-.project-details strong { /* Réutilise le style des skills */ color: var(--color-text); font-weight: 500; background-color: var(--color-skill-tag-bg); padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid var(--color-skill-tag-border); transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; }
-
+.project-details strong { color: var(--color-text); font-weight: 500; background-color: var(--color-skill-tag-bg); padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid var(--color-skill-tag-border); transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; }
 
 /* --- Styles pour la commande AIDE (Révisé) --- */
-.help-header { /* Nouveau style pour l'intro de l'aide */
-    margin-bottom: 1em;
-}
+/* ... (Identique) ... */
+.help-header { margin-bottom: 1em; }
 .help-categories-list { margin-top: 0.5em; margin-bottom: 1.2em; }
-.help-category-title { /* Titre pour une section catégorie */
-    color: var(--color-help-category-title);
-    font-weight: 600;
-    margin: 1.5em 0 0.8em 0;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: color 0.3s ease;
-}
-.help-section { margin-bottom: 1.5em; } /* Espace entre sections/catégories */
-
-/* Style commun pour les entrées d'aide (commande + description) */
+.help-category-title { color: var(--color-help-category-title); font-weight: 600; margin: 1.5em 0 0.8em 0; display: block; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s ease; }
+.help-section { margin-bottom: 1.5em; }
 .help-entry { margin-bottom: 0.6em; }
-.help-command { color: var(--color-prompt); font-weight: 500; transition: color 0.3s ease; }
+.help-command { color: var(--color-prompt); font-weight: 500; transition: color 0.3s ease; } /* Contient les spans .line-prompt */
 .help-description { color: var(--color-output); font-size: 0.95em; transition: color 0.3s ease; }
-.help-description .line-system { display: block; margin-top: 0.2em; opacity: 0.8; padding-left: 0; font-size: 0.9em; } /* Options/Notes */
-
+.help-description .line-system { display: block; margin-top: 0.2em; opacity: 0.8; padding-left: 0; font-size: 0.9em; }
 /* Layout Mobile : Empilé */
 .help-command { display: block; margin-bottom: 0.2em; }
 .help-description { display: block; padding-left: 1.5em; }
-
 /* Layout Desktop : Deux Colonnes */
-@media (min-width: 768px) {
-    .help-entry {
-        display: grid;
-        grid-template-columns: minmax(220px, 300px) 1fr; /* Colonne commande + Colonne description */
-        gap: 15px; align-items: baseline;
-    }
-    .help-command { display: inline; margin-bottom: 0; white-space: nowrap; }
-    .help-description { display: inline; padding-left: 0; font-size: 1em; }
-    .help-entry:has(.line-system) { align-items: start; } /* Alignement haut pour descriptions multi-lignes */
-    .help-description .line-system { padding-left: 0; }
+@media (min-width: 768px) { .help-entry { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 15px; align-items: baseline; } .help-command { display: inline; margin-bottom: 0; white-space: nowrap; } .help-description { display: inline; padding-left: 0; font-size: 1em; } .help-entry:has(.line-system) { align-items: start; } .help-description .line-system { padding-left: 0; } }
+
+
+/* --- Styles pour la commande HTOP --- */
+.htop-container {
+    font-family: var(--font-terminal);
+    white-space: pre; /* Conserve les espaces et retours à la ligne */
+    line-height: 1.25; /* Rapproche les lignes comme dans htop */
+    font-size: 0.9em; /* Légèrement plus petit pour compacter */
+    margin: 0.5em 0;
+    padding: 10px;
+    background-color: rgba(0,0,0, 0.1); /* Léger fond pour délimiter */
+    border-radius: 4px;
+    overflow-x: auto; /* Permet le scroll horizontal si nécessaire */
 }
+
+/* CPU Section */
+.htop-cpus {
+    display: grid;
+    /* Crée 2 lignes de 6 CPUs */
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px 10px; /* Espace vertical et horizontal */
+    margin-bottom: 8px;
+}
+.htop-cpu-core {
+    display: flex;
+    align-items: center;
+}
+.htop-label { /* Pour les numéros de CPU et labels MEM/Swp */
+    color: var(--color-text);
+    min-width: 25px; /* Espace pour 'Swp' */
+    text-align: right;
+    margin-right: 3px;
+    transition: color 0.3s ease;
+}
+.htop-bar {
+    flex-grow: 1;
+    height: 0.9em;
+    background-color: var(--color-htop-bar-bg);
+    border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+    position: relative; /* Pour le texte en surimpression si besoin */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.htop-bar-inner {
+    height: 100%;
+    transition: background-color 0.3s ease, width 0.2s ease-out; /* Animation douce */
+    /* La couleur est définie par style inline */
+}
+.htop-percentage {
+    color: var(--color-text);
+    min-width: 45px; /* Espace pour "100.0%" */
+    padding-left: 5px;
+    transition: color 0.3s ease;
+}
+
+/* MEM/Swp Section */
+.htop-meters {
+    margin-bottom: 8px;
+}
+.htop-meter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+}
+.htop-meter .htop-label { color: var(--color-prompt); transition: color 0.3s ease; } /* Labels MEM/Swp en couleur */
+.htop-meter .htop-bar { width: 200px; /* Largeur fixe pour les barres MEM/Swp */ flex-grow: 0; }
+.htop-meter .htop-text { /* Texte comme 78.8G/128G */
+    color: var(--color-text);
+    padding-left: 8px;
+    transition: color 0.3s ease;
+}
+
+/* Summary Section */
+.htop-summary {
+    margin-bottom: 10px;
+    color: var(--color-text);
+    transition: color 0.3s ease;
+}
+.htop-summary span { /* Pour Tasks, Load, Uptime */
+    margin-right: 15px;
+}
+.htop-summary .value { /* Les chiffres du load average */
+    color: var(--color-highlight);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* Process List Section */
+.htop-process-header, .htop-process {
+    display: flex;
+    width: 100%;
+    margin-bottom: 1px;
+}
+.htop-process-header {
+    color: var(--color-htop-header);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-header-border);
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+.htop-process {
+    color: var(--color-output);
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+.htop-process.htop-process-highlight {
+    background-color: var(--color-htop-process-highlight-bg);
+    color: var(--color-text); /* Texte plus clair sur fond highlight */
+    font-weight: 500;
+}
+
+/* Colonnes des processus */
+.htop-process-header span, .htop-process span {
+    padding: 0 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.htop-pid    { width: 55px; text-align: right; }
+.htop-user   { width: 70px; }
+.htop-pri    { width: 35px; text-align: right; }
+.htop-ni     { width: 35px; text-align: right; }
+.htop-virt   { width: 65px; text-align: right; }
+.htop-res    { width: 65px; text-align: right; }
+.htop-shr    { width: 65px; text-align: right; }
+.htop-s      { width: 25px; text-align: center; }
+.htop-cpu    { width: 55px; text-align: right; }
+.htop-mem    { width: 55px; text-align: right; }
+.htop-time   { width: 75px; text-align: right; }
+.htop-command{ flex-grow: 1; text-align: left; padding-left: 5px; }
 
 
 /* --- Responsive Global --- */
 @media (max-width: 768px) {
+    /* ... (Styles responsives existants) ... */
     body { font-size: 14px; }
     #terminal-container { inset: 1%; border-radius: 8px; }
     .title-bar { height: 24px; font-size: 0.78em; padding: 0 12px; }
@@ -317,5 +348,19 @@ a:hover, a:focus { color: var(--color-link-hover); border-bottom: 1px solid var(
     .help-description .line-system { padding-left: 0; }
 
     .clickable-list span { margin-right: 12px; }
-    .project-list-item .project-id { min-width: 80px; } /* Réduit l'alignement sur mobile */
+    .project-list-item .project-id { min-width: 80px; }
+
+    /* Responsive HTOP: Cache des colonnes moins importantes */
+    .htop-container { font-size: 0.8em; padding: 5px; } /* Encore plus petit */
+    .htop-cpus { grid-template-columns: repeat(4, 1fr); } /* Moins de CPUs par ligne */
+    .htop-pri, .htop-ni, .htop-shr, .htop-time { display: none; } /* Cache ces colonnes */
+    .htop-virt, .htop-res { width: 50px; } /* Réduit largeur */
+    .htop-user { width: 60px; }
+}
+@media (max-width: 480px) {
+    .htop-cpus { grid-template-columns: repeat(3, 1fr); } /* Encore moins */
+    .htop-virt, .htop-res { display: none; } /* Cache encore plus */
+    .htop-user { width: 50px; }
+    .htop-pid { width: 45px; }
+    .htop-cpu, .htop-mem { width: 45px; }
 }
